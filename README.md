@@ -1,3 +1,3 @@
 # Digital Wardrobe
 
-Kotlin - Jetpack Compose
+Kotlin
