@@ -1,20 +1,19 @@
 package com.digitalwardrobe.data
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.digitalwardrobe.R
 
-class WearableAdapter(private val dataList: ArrayList<Wearable>): RecyclerView.Adapter<WearableAdapter.ViewHolderClass>() {
+class WearableAdapter(private val dataList: ArrayList<Wearable>): RecyclerView.Adapter<WearableViewHolder>() {
     var onItemClick: ((Wearable) -> Unit)? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderClass {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
-        return ViewHolderClass(itemView)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WearableViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.wearable_item_layout, parent, false)
+        return WearableViewHolder(itemView)
     }
-    override fun onBindViewHolder(holder: ViewHolderClass, position: Int) {
+
+    override fun onBindViewHolder(holder: WearableViewHolder, position: Int) {
         val currentItem = dataList[position]
         holder.rvImage.setImageResource(currentItem.dataImage)
         holder.rvTitle.text = currentItem.dataTitle
@@ -22,11 +21,8 @@ class WearableAdapter(private val dataList: ArrayList<Wearable>): RecyclerView.A
             onItemClick?.invoke(currentItem)
         }
     }
+
     override fun getItemCount(): Int {
         return dataList.size
-    }
-    class ViewHolderClass(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val rvImage:ImageView = itemView.findViewById(R.id.image)
-        val rvTitle:TextView = itemView.findViewById(R.id.title)
     }
 }

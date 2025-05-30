@@ -26,7 +26,6 @@ class WearableDetailsActivity : AppCompatActivity() {
             val detailTitle: TextView = findViewById(R.id.detailTitle)
             val detailImage: ImageView = findViewById(R.id.detailImage)
             detailTitle.text = getData.dataTitle
-            detailImage.setImageResource(getData.dataDetailImage)
         }
     }
 }
