@@ -13,10 +13,9 @@ import com.digitalwardrobe.data.Wearable
 
 class WearableDetailsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_wearable_details)
+        //super.onCreate(savedInstanceState)
+        //setContentView(R.layout.activity_wearable_details)
 
-        /*
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_wearable_details)
@@ -24,7 +23,7 @@ class WearableDetailsActivity : ComponentActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
-        }*/
+        }
 
         /*val getData = intent.getParcelableExtra<Wearable>("android")
         if (getData != null) {

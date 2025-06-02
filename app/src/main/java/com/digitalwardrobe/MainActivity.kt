@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableAdapter
@@ -31,10 +32,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        recyclerView = findViewById(R.id.wearableRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        wearableAdapter = WearableAdapter(mutableListOf())
+        recyclerView.adapter = wearableAdapter
+
         val wearableViewModel = ViewModelProvider(
             this,
             WearableViewModelFactory(application)
         )[WearableViewModel::class.java]
+
+        //observe LiveData and insert/delete items
+        wearableViewModel.allWearables.observe(this) { wearables ->
+            Log.v("LABEL", "observe")
+
+            wearableAdapter = WearableAdapter(wearables)
+            recyclerView.adapter = wearableAdapter
+        }
 
         // Example: Add a new wearable on launch
         val newWearable = Wearable(
@@ -47,13 +61,6 @@ class MainActivity : AppCompatActivity() {
         )
         wearableViewModel.insert(newWearable)
 
-        //observe LiveData and insert/delete items
-        wearableViewModel.allWearables.observe(this) { wearables ->
-            wearableAdapter = WearableAdapter(wearables)
-            recyclerView.adapter = wearableAdapter
-            //recyclerView.layoutManager = ConstraintLayout(this)
-        }
-
         wearableAdapter.onItemClick = {
             val intent = Intent(this, WearableDetailsActivity::class.java)
             intent.putExtra("android", it)
@@ -63,30 +70,22 @@ class MainActivity : AppCompatActivity() {
         imgGallery = findViewById(R.id.imgGallery)
         val btnGallery: Button = findViewById(R.id.btnGallery)
 
-        /*var resultLauncher =
+        var resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                /*if (result.resultCode == Activity.RESULT_OK && result.requestCode == GALLERY_REQ_CODE) {
+                if (result.resultCode == Activity.RESULT_OK) {
                 // There are no request codes
                 val data: Intent? = result.data
                 imgGallery.setImageURI(data?.data)
-            }*/
-            }*/
+            } }
 
         btnGallery.setOnClickListener {
             Log.v("LABEL", "btn clicked")
-            //val iGallery = Intent(Intent.ACTION_PICK)
-            //iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            //startActivityForResult(iGallery, GALLERY_REQ_CODE)
+            val iGallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            iGallery.data = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            startActivityForResult(iGallery, GALLERY_REQ_CODE)
 
-            //val intent = Intent(Intent.ACTION_PICK, WearableDetailsActivity::class.java)
+            //val intent = Intent(this, WearableDetailsActivity::class.java)
             //resultLauncher.launch(intent)
         }
     }
-
-    /*private fun getData() {
-        for (i in imageList.indices) {
-            val item = Wearable(imageList[i], titleList.getOrNull(i) ?: "Unnamed")
-            dataList.add(item)
-        }
-    }*/
 }
