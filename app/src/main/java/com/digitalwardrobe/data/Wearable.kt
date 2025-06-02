@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "wearable_table")
 data class Wearable(
@@ -18,4 +19,12 @@ data class Wearable(
     @NonNull
     @ColumnInfo(name = "wearable_image")
     var image: String,
-)
+
+    val type: String,
+
+    val color: String,
+
+    val season: String,
+
+    val notes: String?
+) : Serializable

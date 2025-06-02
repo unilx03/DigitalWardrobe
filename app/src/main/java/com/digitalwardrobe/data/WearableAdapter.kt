@@ -1,11 +1,19 @@
 package com.digitalwardrobe.data
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.R
 
-class WearableAdapter(private val dataList: ArrayList<Wearable>): RecyclerView.Adapter<WearableViewHolder>() {
+class WearableViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
+    val rvImage: ImageView = itemView.findViewById(R.id.image)
+    val rvTitle: TextView = itemView.findViewById(R.id.title)
+}
+
+class WearableAdapter(private val dataList: List<Wearable>): RecyclerView.Adapter<WearableViewHolder>() {
     var onItemClick: ((Wearable) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WearableViewHolder {
@@ -15,8 +23,8 @@ class WearableAdapter(private val dataList: ArrayList<Wearable>): RecyclerView.A
 
     override fun onBindViewHolder(holder: WearableViewHolder, position: Int) {
         val currentItem = dataList[position]
-        holder.rvImage.setImageResource(currentItem.dataImage)
-        holder.rvTitle.text = currentItem.dataTitle
+        //holder.rvImage.setImageResource(currentItem.image)
+        holder.rvTitle.text = currentItem.title
         holder.itemView.setOnClickListener{
             onItemClick?.invoke(currentItem)
         }

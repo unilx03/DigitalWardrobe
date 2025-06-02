@@ -6,18 +6,25 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface WearableDao {
 
     @Query("SELECT * FROM wearable_table")
-    suspend fun getListOfWearables(): LiveData<List<Wearable>>
+    fun getAllWearables(): LiveData<List<Wearable>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(wearable: Wearable)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMultiple(wearables: List<Wearable>)
+
+    @Update
+    suspend fun update(wearable: Wearable)
+
+    @Delete
+    suspend fun delete(wearable: Wearable)
 
     @Delete
     suspend fun deleteList(wearableList: List<Wearable>)

@@ -7,7 +7,16 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class WearableRepository(app: Application) {
+class WearableRepository(app: Application, private val dao: WearableDao) {
+    val allWearables: LiveData<List<Wearable>> = dao.getAllWearables()
+
+    suspend fun insert(wearable: Wearable) {
+        dao.insert(wearable)
+    }
+
+    suspend fun delete(wearable: Wearable) {
+        dao.delete(wearable)
+    }
 /*
     var wearableDao: WearableDao
     val listOfWearables: LiveData<List<Wearable>>

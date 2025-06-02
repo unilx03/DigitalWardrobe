@@ -6,6 +6,5 @@ sealed interface WearableEvent {
 
     object ShowDialog : WearableEvent
     object HideDialog : WearableEvent
-    data class SortWearables(val sortType: WearableSortType) : WearableEvent
     data class DeleteWearable(val wearable: Wearable) : WearableEvent
 }

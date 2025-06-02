@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
 @Database(entities = [Wearable::class], version = 1, exportSchema = false)
 abstract class WearableRoomDatabase : RoomDatabase() {
 
-    abstract fun WearableDao(): WearableDao
+    abstract fun wearableDao(): WearableDao
 
     companion object {
 
