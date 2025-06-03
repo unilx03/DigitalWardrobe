@@ -55,6 +55,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,4 +71,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.3.0")
     implementation("com.google.firebase:firebase-database-ktx:20.3.1")
     kapt("androidx.room:room-compiler:2.6.1")
+
+    implementation("com.google.android.material:material:1.11.0")
 }

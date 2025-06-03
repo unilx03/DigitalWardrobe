@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@+id/nav_dressing">
+
+    <fragment
+        android:id="@+id/nav_dressing"
+        android:name="com.digitalwardrobe.ui.dressing.DressingFragment"
+        android:label="@string/menu_dressing"
+        tools:layout="@layout/dressing_fragment" />
+
+    <fragment
+        android:id="@+id/nav_wardrobe"
+        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeFragment"
+        android:label="@string/menu_wardrobe"
+        tools:layout="@layout/wardrobe_fragment" />
+
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.digitalwardrobe.WearableDetailsFragment"
+        android:label="fragment_wearable_details"
+        tools:layout="@layout/wearable_details_fragment" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.digitalwardrobe.ui.profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/profile_fragment" />
+
+</navigation>

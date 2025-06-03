@@ -17,7 +17,7 @@ class WearableAdapter(private val dataList: List<Wearable>): RecyclerView.Adapte
     var onItemClick: ((Wearable) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WearableViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.wearable_item_layout, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.wearable_item_card, parent, false)
         return WearableViewHolder(itemView)
     }
 
