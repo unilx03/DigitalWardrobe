@@ -18,16 +18,18 @@
         tools:layout="@layout/wardrobe_fragment" />
 
     <fragment
-        android:id="@+id/detailsFragment"
-        android:name="com.digitalwardrobe.WearableDetailsFragment"
-        android:label="fragment_wearable_details"
-        tools:layout="@layout/wearable_details_fragment" >
-    </fragment>
-
-    <fragment
         android:id="@+id/nav_profile"
         android:name="com.digitalwardrobe.ui.profile.ProfileFragment"
         android:label="@string/menu_profile"
         tools:layout="@layout/profile_fragment" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.digitalwardrobe.SettingsFragment"
+        android:label="SettingsFragment" />
+    <action
+        android:id="@+id/action_global_settingsFragment"
+        app:destination="@id/settingsFragment"
+        app:popUpTo="@id/settingsFragment" />
 
 </navigation>

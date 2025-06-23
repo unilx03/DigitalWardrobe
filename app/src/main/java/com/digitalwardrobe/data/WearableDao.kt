@@ -29,8 +29,8 @@ interface WearableDao {
     @Delete
     suspend fun deleteList(wearableList: List<Wearable>)
 
-    @Query("DELETE FROM wearable_table WHERE id in (:idList)")
-    suspend fun deleteDone(idList: List<String>)
+    @Query("DELETE FROM wearable_table")
+    suspend fun deleteAll()
 
     @Query("SELECT * FROM wearable_table ORDER BY wearable_title")
     fun getWearableByTitle() : LiveData<List<Wearable>> //updates with new content

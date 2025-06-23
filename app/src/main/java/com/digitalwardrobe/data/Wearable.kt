@@ -1,5 +1,6 @@
 package com.digitalwardrobe.data
 
+import android.net.Uri
 import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity

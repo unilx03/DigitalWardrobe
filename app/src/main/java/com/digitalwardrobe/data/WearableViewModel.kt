@@ -27,6 +27,10 @@ class WearableViewModel(application: Application) : ViewModel() {
     fun delete(wearable: Wearable) = viewModelScope.launch {
         repository.delete(wearable)
     }
+
+    fun deleteAll() = viewModelScope.launch {
+        repository.deleteAll()
+    }
 }
 
 class WearableViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

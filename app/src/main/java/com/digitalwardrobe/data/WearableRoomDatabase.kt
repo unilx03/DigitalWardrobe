@@ -19,7 +19,7 @@ abstract class WearableRoomDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: WearableRoomDatabase? = null
 
-        /*private const val nThreads: Int = 4
+        private const val nThreads: Int = 4
         val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(nThreads)
 
         private val sRoomDatabaseCallback = object: RoomDatabase.Callback() {
@@ -33,7 +33,7 @@ abstract class WearableRoomDatabase : RoomDatabase() {
             }
         }
 
-        fun getDatabase(context: Context) : WearableRoomDatabase {
+        /*fun getDatabase(context: Context) : WearableRoomDatabase {
             return INSTANCE ?: synchronized (this) {
                 val _INSTANCE = Room.databaseBuilder(
                     context.applicationContext,

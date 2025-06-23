@@ -1,12 +1,9 @@
-package com.digitalwardrobe.ui.dressing
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -14,11 +11,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.R
+import com.digitalwardrobe.ui.dressing.CalendarAdapter
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
-class DressingFragment : Fragment(), CalendarAdapter.OnItemListener {
+class CalendarFragment : Fragment(), CalendarAdapter.OnItemListener {
 
     private lateinit var calendarRecyclerView: RecyclerView
     private lateinit var monthYearText: TextView

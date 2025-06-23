@@ -17,6 +17,10 @@ class WearableRepository(app: Application, private val dao: WearableDao) {
     suspend fun delete(wearable: Wearable) {
         dao.delete(wearable)
     }
+
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
 /*
     var wearableDao: WearableDao
     val listOfWearables: LiveData<List<Wearable>>
