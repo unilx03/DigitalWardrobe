@@ -15,7 +15,12 @@
         android:id="@+id/nav_wardrobe"
         android:name="com.digitalwardrobe.ui.wardrobe.WardrobeFragment"
         android:label="@string/menu_wardrobe"
-        tools:layout="@layout/wardrobe_fragment" />
+        tools:layout="@layout/wardrobe_fragment">
+
+        <action
+            android:id="@+id/action_wardrobe_to_details"
+            app:destination="@id/wearableDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_profile"
@@ -31,5 +36,15 @@
         android:id="@+id/action_global_settingsFragment"
         app:destination="@id/settingsFragment"
         app:popUpTo="@id/settingsFragment" />
+
+    <fragment
+        android:id="@+id/wearableDetailsFragment"
+        android:name="com.digitalwardrobe.WearableDetailsFragment"
+        android:label="Wearable Details"
+        tools:layout="@layout/wearable_details_fragment">
+        <argument
+            android:name="wearableId"
+            app:argType="string"/>
+    </fragment>
 
 </navigation>

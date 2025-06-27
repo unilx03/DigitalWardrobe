@@ -1,23 +1,17 @@
 package com.digitalwardrobe.ui.wardrobe
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.R
@@ -26,12 +20,11 @@ import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
-import com.digitalwardrobe.ui.dressing.CalendarAdapter
+
 
 class WardrobeFragment : Fragment(){
     private lateinit var wearableViewModel: WearableViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var imgGallery: ImageView
     private lateinit var wearableAdapter: WearableAdapter
 
     override fun onCreateView(
@@ -63,10 +56,12 @@ class WardrobeFragment : Fragment(){
             wearableAdapter.updateData(wearables)
         }
 
-        wearableAdapter.onItemClick = {
-            val intent = Intent(context, WearableDetailsFragment::class.java)
-            intent.putExtra("android", it)
-            startActivity(intent)
+        wearableAdapter.onItemClick = { selectedWearable ->
+            val wearableId : String = selectedWearable.id.toString()
+            val action = WardrobeFragmentDirections
+                .actionWardrobeToDetails(wearableId)
+
+            findNavController().navigate(action)
         }
 
         val resultLauncher =
@@ -100,7 +95,7 @@ class WardrobeFragment : Fragment(){
             deleteWearables()
         }
 
-        val builder = AlertDialog.Builder(context)
+        /*val builder = AlertDialog.Builder(context)
         builder.also {
             it
                 .setMessage("Are you sure you want to exit?")
@@ -109,7 +104,7 @@ class WardrobeFragment : Fragment(){
                 .setNegativeButton("No", { dialog,id -> dialog.cancel() })
         }
         val alert: AlertDialog = builder.create()
-        //alert.show()
+        alert.show()*/
     }
 
     private fun addWearable(uri: String){

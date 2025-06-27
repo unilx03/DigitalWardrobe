@@ -1,17 +1,28 @@
 package com.digitalwardrobe
 
+import android.graphics.BitmapFactory
 import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.activity.ComponentActivity
+import androidx.core.net.toUri
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
+import com.digitalwardrobe.data.Wearable
+import com.digitalwardrobe.data.WearableViewModel
+import com.digitalwardrobe.data.WearableViewModelFactory
 
 class WearableDetailsFragment : Fragment() {
+    private val args: WearableDetailsFragmentArgs by navArgs()
+    private lateinit var viewModel: WearableViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -21,13 +32,24 @@ class WearableDetailsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val textView: TextView = view.findViewById(R.id.detailTitle)
-        textView.text = arguments?.getString(DETAILS)
         super.onViewCreated(view, savedInstanceState)
-    }
 
-    companion object{
-        const val DETAILS: String = "details"
+        val wearableId = args.wearableId
+        viewModel = ViewModelProvider(
+            requireActivity(),
+            WearableViewModelFactory(requireActivity().application)
+        )[WearableViewModel::class.java]
+
+        viewModel.getWearableById(wearableId.toLong()).observe(viewLifecycleOwner) { wearable ->
+            // Load image from URI
+            val bitmap = BitmapFactory.decodeStream(
+                context?.contentResolver?.openInputStream(wearable?.image?.toUri()!!)
+            )
+            view.findViewById<ImageView>(R.id.detailImage).setImageBitmap(bitmap)
+
+            val textView: TextView = view.findViewById(R.id.detailTitle)
+            textView.text = wearable?.title
+        }
     }
 
     /*
