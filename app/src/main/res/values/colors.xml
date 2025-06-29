@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#888</color>
     <color name="blue">#0000FF</color>
+
+    <color name="wardrobePurple">#9755C0</color>
+    <color name="wardrobeVariant">#9B4ACC</color>
+    <color name="wardrobeSecondary">#BE70DC</color>
+    <color name="wardrobeSecondaryVariant">#AF5DD0</color>
 </resources>

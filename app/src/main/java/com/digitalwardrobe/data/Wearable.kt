@@ -8,6 +8,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
+import java.util.Date
 
 @Entity(tableName = "wearable_table")
 @Parcelize
@@ -17,18 +18,30 @@ data class Wearable(
     val id: Int? = null,
 
     @NonNull
-    @ColumnInfo(name = "wearable_title")
-    var title: String,
-
-    @NonNull
     @ColumnInfo(name = "wearable_image")
     var image: String,
 
-    val type: String,
+    @ColumnInfo(name = "wearable_addDate")
+    var addDate: String,
 
-    val color: String,
+    @ColumnInfo(name = "wearable_category")
+    val category: String,
 
+    @ColumnInfo(name = "wearable_colors")
+    val colors: String,
+
+    @ColumnInfo(name = "wearable_tags")
+    val tags: String,
+
+    @ColumnInfo(name = "wearable_brand")
+    val brand: String,
+
+    @ColumnInfo(name = "wearable_price")
+    val price: String,
+
+    @ColumnInfo(name = "wearable_season")
     val season: String,
 
+    @ColumnInfo(name = "wearable_notes")
     val notes: String?
 ) : Serializable, Parcelable

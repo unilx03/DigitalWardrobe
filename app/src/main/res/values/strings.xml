@@ -10,9 +10,28 @@
     <string name="menu_dressing">Dressing</string>
     <string name="menu_wardrobe">Wardrobe</string>
     <string name="menu_profile">Profile</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="back"><![CDATA[<-]]></string>
     <string name="forward"><![CDATA[->]]></string>
+
+    <string-array name="wearableCategories">
+        <item> Tops </item>
+        <item> Bottoms </item>
+        <item> Outerwear </item>
+        <item> Bags </item>
+        <item> Footwear </item>
+        <item> Accessories </item>
+        <item> Underwear &amp; Nightwear </item>
+        <item> Swimwear </item>
+        <item> Full body </item>
+    </string-array>
+    <string-array name="wearableSeasons">
+        <item> Spring </item>
+        <item> Summer </item>
+        <item> Autumn </item>
+        <item> Winter </item>
+        <item> All season </item>
+        <item> Mid season </item>
+        <item> Not specific </item>
+    </string-array>
 </resources>

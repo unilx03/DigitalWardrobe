@@ -14,12 +14,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.ColumnInfo
 import com.digitalwardrobe.R
-import com.digitalwardrobe.WearableDetailsFragment
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class WardrobeFragment : Fragment(){
@@ -83,7 +84,7 @@ class WardrobeFragment : Fragment(){
                     }
                 } }
 
-        view.findViewById<Button>(R.id.buttonAddWearable)?.setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.buttonAddWearable)?.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "image/*"
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -91,7 +92,7 @@ class WardrobeFragment : Fragment(){
             resultLauncher.launch(intent)
         }
 
-        view.findViewById<Button>(R.id.buttonRemoveWearables)?.setOnClickListener {
+        view.findViewById<FloatingActionButton>(R.id.buttonRemoveWearables)?.setOnClickListener {
             deleteWearables()
         }
 
@@ -108,24 +109,22 @@ class WardrobeFragment : Fragment(){
     }
 
     private fun addWearable(uri: String){
-
         // Example: Add a new wearable on launch
         val newWearable = Wearable(
-            title = "Wearable",
             image = uri,
-            type = "Topwear",
-            color = "Red",
-            season = "Summer",
-            notes = "Bought on sale"
+            addDate = "",
+            category = "",
+            colors = "",
+            tags = "",
+            brand = "",
+            price = "",
+            season = "",
+            notes = ""
         )
         wearableViewModel.insert(newWearable)
     }
 
     private fun deleteWearables(){
         wearableViewModel.deleteAll()
-    }
-
-    private fun finish() {
-        TODO("Not yet implemented")
     }
 }

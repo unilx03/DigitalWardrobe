@@ -22,13 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".WearableDetailsFragment"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.example.ACTION_ECHO" />
-            </intent-filter>
-        </activity>
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
