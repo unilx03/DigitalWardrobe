@@ -7,23 +7,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.ColumnInfo
 import com.digitalwardrobe.R
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
-class WardrobeFragment : Fragment(){
+class WardrobeItemsFragment : Fragment(){
     private lateinit var wearableViewModel: WearableViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var wearableAdapter: WearableAdapter
@@ -33,7 +35,7 @@ class WardrobeFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.wardrobe_fragment, container, false)
+        return inflater.inflate(R.layout.wardrobe_items_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,11 +60,13 @@ class WardrobeFragment : Fragment(){
         }
 
         wearableAdapter.onItemClick = { selectedWearable ->
-            val wearableId : String = selectedWearable.id.toString()
-            val action = WardrobeFragmentDirections
-                .actionWardrobeToDetails(wearableId)
+            val wearableId = selectedWearable.id.toString()
 
-            findNavController().navigate(action)
+            // This gets the NavController from the hosting activity's NavHostFragment
+            val navController = requireActivity().findNavController(R.id.nav_view)
+
+            val action = WardrobeItemsFragmentDirections.actionWardrobeToDetails(wearableId)
+            navController.navigate(action)
         }
 
         val resultLauncher =
@@ -109,15 +113,18 @@ class WardrobeFragment : Fragment(){
     }
 
     private fun addWearable(uri: String){
-        // Example: Add a new wearable on launch
+        // Add a new wearable on launch
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val todayDate = dateFormat.format(Date())
+
         val newWearable = Wearable(
             image = uri,
-            addDate = "",
+            addDate = todayDate,
             category = "",
             colors = "",
             tags = "",
             brand = "",
-            price = "",
+            price = 0.0,
             season = "",
             notes = ""
         )

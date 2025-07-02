@@ -14,6 +14,10 @@ class WearableRepository(app: Application, private val dao: WearableDao) {
         dao.insert(wearable)
     }
 
+    suspend fun update(wearable: Wearable) {
+        dao.update(wearable)
+    }
+
     suspend fun delete(wearable: Wearable) {
         dao.delete(wearable)
     }

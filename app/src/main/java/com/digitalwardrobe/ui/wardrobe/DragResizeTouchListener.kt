@@ -1,3 +1,5 @@
+package com.digitalwardrobe.ui.wardrobe
+
 import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View

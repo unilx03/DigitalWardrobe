@@ -24,6 +24,10 @@ class WearableViewModel(application: Application) : ViewModel() {
         repository.insert(wearable)
     }
 
+    fun updateWearable(wearable: Wearable) = viewModelScope.launch {
+        repository.update(wearable)
+    }
+
     fun delete(wearable: Wearable) = viewModelScope.launch {
         repository.delete(wearable)
     }

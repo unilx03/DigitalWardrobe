@@ -37,7 +37,7 @@ data class Wearable(
     val brand: String,
 
     @ColumnInfo(name = "wearable_price")
-    val price: String,
+    val price: Double,
 
     @ColumnInfo(name = "wearable_season")
     val season: String,

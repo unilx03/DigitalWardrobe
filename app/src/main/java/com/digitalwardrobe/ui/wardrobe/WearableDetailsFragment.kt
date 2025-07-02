@@ -1,4 +1,4 @@
-package com.digitalwardrobe
+package com.digitalwardrobe.ui.wardrobe
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -10,16 +10,21 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.digitalwardrobe.R
+import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -28,6 +33,10 @@ import java.util.Locale
 class WearableDetailsFragment : Fragment() {
     private val args: WearableDetailsFragmentArgs by navArgs()
     private lateinit var viewModel: WearableViewModel
+    private lateinit var currentWearable: Wearable
+
+    private val selectedColors = mutableListOf<String>()
+    private val selectedTags = mutableListOf<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +55,7 @@ class WearableDetailsFragment : Fragment() {
             WearableViewModelFactory(requireActivity().application)
         )[WearableViewModel::class.java]
 
+        //set date picker for addDate field
         val dateInput = view.findViewById<TextInputEditText>(R.id.wearableAddDate)
         val dateButton = view.findViewById<Button>(R.id.dateButton)
 
@@ -67,11 +77,10 @@ class WearableDetailsFragment : Fragment() {
             dateInput.setText(formattedDate)
         }
 
+        //set color add chip group
         val colorInput = view.findViewById<EditText>(R.id.colorInput)
         val addColorButton = view.findViewById<Button>(R.id.addColorButton)
         val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
-
-        val selectedColors = mutableListOf<String>()
 
         addColorButton.setOnClickListener {
             val color = colorInput.text.toString().trim()
@@ -90,19 +99,18 @@ class WearableDetailsFragment : Fragment() {
             }
         }
 
-        val colorsString = selectedColors.joinToString(",")
-        val colorsList = colorsString.split(",")
+        //val colorsString = selectedColors.joinToString(",")
+        //val colorsList = colorsString.split(",")
 
+        //set tag add chip group
         val tagInput = view.findViewById<EditText>(R.id.tagInput)
         val addTagButton = view.findViewById<Button>(R.id.addTagButton)
         val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
 
-        val selectedTag = mutableListOf<String>()
-
         addTagButton.setOnClickListener {
             val tag = tagInput.text.toString().trim()
-            if (tag.isNotEmpty() && !selectedTag.contains(tag)) {
-                selectedTag.add(tag)
+            if (tag.isNotEmpty() && !selectedTags.contains(tag)) {
+                selectedTags.add(tag)
                 val chip = Chip(requireContext()).apply {
                     text = tag
                     isCloseIconVisible = true
@@ -116,34 +124,99 @@ class WearableDetailsFragment : Fragment() {
             }
         }
 
+        //set categories droplist options
         var items = resources.getStringArray(R.array.wearableCategories)
         var adapter = ArrayAdapter(requireContext(), R.layout.droplist_item, items)
         val categoriesDropDown: AutoCompleteTextView =
             view.findViewById(R.id.wearableCategory)
         categoriesDropDown.setAdapter(adapter)
 
+        //set seasons droplist options
         items = resources.getStringArray(R.array.wearableSeasons)
         adapter = ArrayAdapter(requireContext(), R.layout.droplist_item, items)
         val seasonsDropDown: AutoCompleteTextView =
             view.findViewById(R.id.wearableSeason)
         seasonsDropDown.setAdapter(adapter)
 
+        val saveButton = view.findViewById<Button>(R.id.saveButton)
+        saveButton.setOnClickListener{ updateWearable() }
+
         viewModel.getWearableById(wearableId.toLong()).observe(viewLifecycleOwner) { wearable ->
-            // Load image from URI
-            val bitmap = BitmapFactory.decodeStream(
-                context?.contentResolver?.openInputStream(wearable?.image?.toUri()!!)
-            )
-            view.findViewById<ImageView>(R.id.wearableImage).setImageBitmap(bitmap)
+            wearable?.let {
+                // Load image
+                val bitmap = BitmapFactory.decodeStream(
+                    context?.contentResolver?.openInputStream(it.image.toUri())
+                )
+                view.findViewById<ImageView>(R.id.wearableImage).setImageBitmap(bitmap)
 
-            val brandEditText = view.findViewById<TextInputEditText>(R.id.wearableBrand)
-            brandEditText.setText(wearable.brand)
+                // Set basic fields
+                view.findViewById<TextInputEditText>(R.id.wearableBrand).setText(it.brand)
+                view.findViewById<TextInputEditText>(R.id.wearableAddDate).setText(it.addDate)
+                if (it.price != 0.0)
+                    view.findViewById<TextInputEditText>(R.id.wearablePrice).setText(it.price.toString())
+                view.findViewById<AutoCompleteTextView>(R.id.wearableCategory).setText(it.category, false)
+                view.findViewById<AutoCompleteTextView>(R.id.wearableSeason).setText(it.season, false)
+                view.findViewById<TextInputEditText>(R.id.wearableNotes).setText(it.notes)
 
-            //update wearable in database
-            updateWearable()
+                // Populate color chips
+                val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
+                selectedColors.clear()
+                colorChipGroup.removeAllViews()
+                it.colors.split(",").forEach { color ->
+                    if (color.isNotBlank()) {
+                        selectedColors.add(color)
+                        val chip = Chip(requireContext()).apply {
+                            text = color
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                colorChipGroup.removeView(this)
+                                selectedColors.remove(color)
+                            }
+                        }
+                        colorChipGroup.addView(chip)
+                    }
+                }
+
+                // Populate tag chips
+                val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
+                selectedTags.clear()
+                tagChipGroup.removeAllViews()
+                it.tags.split(",").forEach { tag ->
+                    if (tag.isNotBlank()) {
+                        selectedTags.add(tag)
+                        val chip = Chip(requireContext()).apply {
+                            text = tag
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                tagChipGroup.removeView(this)
+                                selectedTags.remove(tag)
+                            }
+                        }
+                        tagChipGroup.addView(chip)
+                    }
+                }
+
+                // Store current wearable for update
+                currentWearable = it
+            }
         }
     }
 
-    fun updateWearable(){
+    fun updateWearable() {
+        val updatedWearable = currentWearable.copy(
+            addDate = view?.findViewById<TextInputEditText>(R.id.wearableAddDate)?.text.toString(),
+            category = view?.findViewById<AutoCompleteTextView>(R.id.wearableCategory)?.text.toString(),
+            brand = view?.findViewById<TextInputEditText>(R.id.wearableBrand)?.text.toString(),
+            price = view?.findViewById<TextInputEditText>(R.id.wearablePrice)?.text.toString().toDoubleOrNull() ?: 0.0,
+            season = view?.findViewById<AutoCompleteTextView>(R.id.wearableSeason)?.text.toString(),
+            notes = view?.findViewById<TextInputEditText>(R.id.wearableNotes)?.text.toString(),
+            colors = selectedColors.joinToString(","),
+            tags = selectedTags.joinToString(",")
+        )
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.updateWearable(updatedWearable)
+            Toast.makeText(requireContext(), "Wearable updated", Toast.LENGTH_SHORT).show()
+        }
     }
 }
