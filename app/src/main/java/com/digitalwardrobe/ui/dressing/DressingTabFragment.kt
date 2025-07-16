@@ -22,7 +22,7 @@ class DressingTabFragment : Fragment() {
 
         val adapter: DressingViewPagerAdapter = DressingViewPagerAdapter(this)
         adapter.addFragment(DressingPlannerFragment(), "Planner")
-        adapter.addFragment(DressingMoodboardFragment(), "Moodboard")
+        adapter.addFragment(DressingMoodboardFragment(), "Mood board")
 
         viewPager.adapter = adapter
 

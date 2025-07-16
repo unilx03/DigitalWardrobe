@@ -1,4 +1,5 @@
 package com.digitalwardrobe.ui.dressing
+import android.view.MotionEvent
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter

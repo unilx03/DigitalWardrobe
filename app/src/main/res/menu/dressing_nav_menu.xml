@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dressing_planner"
+        android:icon="@drawable/calendar_month_24px"
+        android:title="Planner" />
+    <item
+        android:id="@+id/dressing_moodboard"
+        android:icon="@drawable/hallway_24px"
+        android:title="Moodboard" />
+</menu>

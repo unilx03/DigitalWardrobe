@@ -1,5 +1,6 @@
 package com.digitalwardrobe.ui.wardrobe
 
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.digitalwardrobe.R
 import com.digitalwardrobe.data.Wearable
@@ -141,7 +143,21 @@ class WearableDetailsFragment : Fragment() {
         val saveButton = view.findViewById<Button>(R.id.saveButton)
         saveButton.setOnClickListener{ updateWearable() }
 
-        viewModel.getWearableById(wearableId.toLong()).observe(viewLifecycleOwner) { wearable ->
+        val deleteButton = view.findViewById<Button>(R.id.deleteButton)
+        deleteButton.setOnClickListener{
+            val builder = AlertDialog.Builder(context)
+            builder.also {
+                it
+                    .setMessage("Are you sure you want to delete?")
+                    .setCancelable(false) //cancealable through back?
+                    .setPositiveButton("Yes", { dialog, id -> deleteWearable() })
+                    .setNegativeButton("No", { dialog,id -> dialog.cancel() })
+            }
+            val alert: AlertDialog = builder.create()
+            alert.show()
+        }
+
+        viewModel.getWearableById(wearableId).observe(viewLifecycleOwner) { wearable ->
             wearable?.let {
                 // Load image
                 val bitmap = BitmapFactory.decodeStream(
@@ -217,6 +233,13 @@ class WearableDetailsFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.updateWearable(updatedWearable)
             Toast.makeText(requireContext(), "Wearable updated", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun deleteWearable() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.delete(currentWearable)
+            findNavController().popBackStack()
         }
     }
 }

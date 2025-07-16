@@ -15,7 +15,7 @@ import java.util.Date
 data class Wearable(
 
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val id: Long = 0,
 
     @NonNull
     @ColumnInfo(name = "wearable_image")

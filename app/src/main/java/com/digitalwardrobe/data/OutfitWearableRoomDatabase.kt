@@ -9,15 +9,15 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 // exportSchema set to false to avoid DB migrations
-@Database(entities = [Wearable::class], version = 1, exportSchema = false)
-abstract class WearableRoomDatabase : RoomDatabase() {
+@Database(entities = [OutfitWearable::class], version = 1, exportSchema = false)
+abstract class OutfitWearableRoomDatabase : RoomDatabase() {
 
-    abstract fun wearableDao(): WearableDao
+    abstract fun outfitWearableDao(): OutfitWearableDao
 
     companion object {
 
         @Volatile
-        private var INSTANCE: WearableRoomDatabase? = null
+        private var INSTANCE: OutfitWearableRoomDatabase? = null
 
         private const val nThreads: Int = 4
         val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(nThreads)
@@ -45,17 +45,16 @@ abstract class WearableRoomDatabase : RoomDatabase() {
             }
         }*/
 
-        fun getDatabase(context: Context): WearableRoomDatabase {
+        fun getDatabase(context: Context): OutfitWearableRoomDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    WearableRoomDatabase::class.java,
-                    "wearable_database"
+                    OutfitWearableRoomDatabase::class.java,
+                    "outfit_wearable_database"
                 ).build()
                 INSTANCE = instance
                 instance
             }
         }
-
     }
 }

@@ -11,7 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -22,13 +21,12 @@ import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
-class WardrobeItemsFragment : Fragment(){
+class OutfitSelectWearableFragment : Fragment(){
     private lateinit var wearableViewModel: WearableViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var wearableAdapter: WearableAdapter
@@ -38,7 +36,7 @@ class WardrobeItemsFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.wardrobe_items_fragment, container, false)
+        return inflater.inflate(R.layout.outfit_select_wearable_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,57 +61,11 @@ class WardrobeItemsFragment : Fragment(){
         }
 
         wearableAdapter.onItemClick = { selectedWearable ->
-            val action = WardrobeItemsFragmentDirections.actionWardrobeToDetails(selectedWearable.id)
-            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
-        }
+            val wearableId = selectedWearable.id.toString()
 
-        val resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // There are no request codes
-                    val data: Intent? = result.data
-
-                    val uri = data?.data
-                    if (uri != null) {
-                        requireContext().contentResolver.takePersistableUriPermission(
-                            uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        )
-
-                        // Now you can safely store this uri.toString() in the database
-                        val imageUriString = uri.toString()
-                        addWearable(imageUriString)
-                    }
-                } }
-
-        view.findViewById<FloatingActionButton>(R.id.buttonAddWearable)?.setOnClickListener {
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "image/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-            }
-            resultLauncher.launch(intent)
-        }
-    }
-
-    private fun addWearable(uri: String){
-        // Add a new wearable on launch
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val todayDate = dateFormat.format(Date())
-
-        val newWearable = Wearable(
-            image = uri,
-            addDate = todayDate,
-            category = "",
-            colors = "",
-            tags = "",
-            brand = "",
-            price = 0.0,
-            season = "",
-            notes = ""
-        )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            wearableViewModel.insert(newWearable)
+            val navController = findNavController()
+            navController.previousBackStackEntry?.savedStateHandle?.set("wearableId", wearableId)
+            navController.popBackStack()
         }
     }
 }

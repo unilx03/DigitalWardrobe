@@ -1,14 +1,25 @@
 package com.digitalwardrobe.ui.dressing
 
+import com.digitalwardrobe.ui.wardrobe.DragResizeTouchListener
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.digitalwardrobe.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class DressingMoodboardFragment : Fragment(){
-    //private lateinit var canvas: FrameLayout
+    private lateinit var canvas: FrameLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,8 +32,8 @@ class DressingMoodboardFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*canvas = view.findViewById(R.id.canvas)
-        val btnAddImage: Button = view.findViewById(R.id.btnAddImage)
+        canvas = view.findViewById(R.id.canvas)
+        val btnAddImage: FloatingActionButton = view.findViewById(R.id.btnAddImage)
 
         var resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -39,14 +50,14 @@ class DressingMoodboardFragment : Fragment(){
         btnAddImage.setOnClickListener {
             Log.v("LABEL", "btn clicked")
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "image"
+                type = "image/*"
                 addCategory(Intent.CATEGORY_OPENABLE)
             }
             resultLauncher.launch(intent)
-        }*/
+        }
     }
 
-    /*private fun addImageToCanvas(uri: Uri?, x: Float, y: Float, scale: Float, zIndex: Int) {
+    private fun addImageToCanvas(uri: Uri?, x: Float, y: Float, scale: Float, zIndex: Int) {
         if (uri == null) return
 
         val imageView = ImageView(requireContext()).apply {
@@ -62,5 +73,5 @@ class DressingMoodboardFragment : Fragment(){
 
         imageView.setOnTouchListener(DragResizeTouchListener())
         canvas.addView(imageView, zIndex)
-    }*/
+    }
 }

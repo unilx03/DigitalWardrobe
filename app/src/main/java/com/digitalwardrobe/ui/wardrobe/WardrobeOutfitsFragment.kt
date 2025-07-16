@@ -1,24 +1,37 @@
 package com.digitalwardrobe.ui.wardrobe
 
-import com.digitalwardrobe.ui.wardrobe.DragResizeTouchListener
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.R
+import com.digitalwardrobe.data.Outfit
+import com.digitalwardrobe.data.OutfitAdapter
+import com.digitalwardrobe.data.OutfitViewModel
+import com.digitalwardrobe.data.OutfitViewModelFactory
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class WardrobeOutfitsFragment : Fragment(){
-    private lateinit var canvas: FrameLayout
+
+class WardrobeOutfitsFragment : Fragment() {
+    private lateinit var outfitViewModel: OutfitViewModel
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var outfitAdapter: OutfitAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,46 +44,48 @@ class WardrobeOutfitsFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        canvas = view.findViewById(R.id.canvas)
-        val btnAddImage: Button = view.findViewById(R.id.btnAddImage)
+        recyclerView = view.findViewById(R.id.outfitsRecyclerView)
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 
-        var resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // There are no request codes
-                    val data: Intent? = result.data
-                    val uri = data?.data
+        outfitAdapter = OutfitAdapter(mutableListOf())
+        recyclerView.adapter = outfitAdapter
 
-                    if (uri != null) {
-                        addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
-                    }
-                } }
+        outfitViewModel = ViewModelProvider(
+            requireActivity(),
+            OutfitViewModelFactory(requireActivity().application)
+        )[OutfitViewModel::class.java]
 
-        btnAddImage.setOnClickListener {
-            Log.v("LABEL", "btn clicked")
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "image/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-            }
-            resultLauncher.launch(intent)
+        //observe LiveData and insert/delete items
+        outfitViewModel.allOutfits.observe(viewLifecycleOwner) { outfits ->
+            Log.v("LABEL", "Items received: ${outfits.size}")
+
+            outfitAdapter.updateData(outfits)
+        }
+
+        outfitAdapter.onItemClick = { selectedOutfit ->
+            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(selectedOutfit.id)
+            requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
+        }
+
+        view.findViewById<FloatingActionButton>(R.id.buttonAddOutfit)?.setOnClickListener {
+            addOutfit()
         }
     }
 
-    private fun addImageToCanvas(uri: Uri?, x: Float, y: Float, scale: Float, zIndex: Int) {
-        if (uri == null) return
+    private fun addOutfit() {
+        // Add a new wearable on launch
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val todayDate = dateFormat.format(Date())
 
-        val imageView = ImageView(requireContext()).apply {
-            setImageURI(uri)
-            layoutParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                leftMargin = x.toInt()
-                topMargin = y.toInt()
-            }
-            scaleX = scale
-            scaleY = scale
-            tag = uri.toString()  // used for saving
+        val newOutfit = Outfit(
+            name = "",
+            preview = "android.resource://${requireContext().packageName}/${R.drawable.ic_launcher_foreground}",
+            addDate = todayDate,
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(outfitViewModel.insert(newOutfit))
+            findNavController().navigate(action)
         }
-
-        imageView.setOnTouchListener(DragResizeTouchListener())
-        canvas.addView(imageView, zIndex)
     }
 }

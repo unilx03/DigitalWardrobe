@@ -9,7 +9,7 @@
 
     <string name="menu_dressing">Dressing</string>
     <string name="menu_wardrobe">Wardrobe</string>
-    <string name="menu_profile">Profile</string>
+    <string name="menu_stats">Stats</string>
 
     <string name="back"><![CDATA[<-]]></string>
     <string name="forward"><![CDATA[->]]></string>

@@ -7,11 +7,14 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-class DragResizeTouchListener : View.OnTouchListener {
+class DragResizeTouchListener(
+    private val onClick: (() -> Unit)? = null
+) : View.OnTouchListener {
 
     private var mode = NONE
     private var dX = 0f
     private var dY = 0f
+    private val clickThreshold = 10f
     private var initialDistance = 0f
     private var initialScale = 1f
 
@@ -28,6 +31,9 @@ class DragResizeTouchListener : View.OnTouchListener {
             MotionEvent.ACTION_DOWN -> {
                 dX = event.rawX - view.x
                 dY = event.rawY - view.y
+
+                onClick?.invoke()
+
                 mode = DRAG
             }
 

@@ -20,20 +20,16 @@ class WearableViewModel(application: Application) : ViewModel() {
         allWearables = repository.allWearables
     }
 
-    fun insert(wearable: Wearable) = viewModelScope.launch {
-        repository.insert(wearable)
+    suspend fun insert(wearable: Wearable) : Long {
+        return repository.insert(wearable)
     }
 
-    fun updateWearable(wearable: Wearable) = viewModelScope.launch {
+    suspend fun updateWearable(wearable: Wearable) {
         repository.update(wearable)
     }
 
-    fun delete(wearable: Wearable) = viewModelScope.launch {
+    suspend fun delete(wearable: Wearable) {
         repository.delete(wearable)
-    }
-
-    fun deleteAll() = viewModelScope.launch {
-        repository.deleteAll()
     }
 
     fun getWearableById(id: Long): LiveData<Wearable> {
@@ -50,34 +46,3 @@ class WearableViewModelFactory(private val application: Application) : ViewModel
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-/*
-class WearableViewModel(private val repository: WearableRepository) : ViewModel() {
-
-    val allWearables: LiveData<List<Wearable>> = repository.listOfWearable
-
-    fun getAllWearables(): LiveData<List<Wearable>> {
-        return repository.getAllWearables()
-    }
-
-    fun insertWearable (wearable: Wearable) {
-        repository.insertWearable(wearable)
-    }
-
-    fun onEvent(event : WearableEvent) {
-        when(event){
-            is WearableEvent.DeleteWearable -> {
-                viewModelScope.launch {
-                    dao.deleteWearable(event.wearable)
-                }
-            }
-            WearableEvent.HideDialog -> TODO()
-            WearableEvent.SaveWearable -> TODO()
-            is WearableEvent.SetTitle -> TODO()
-            WearableEvent.ShowDialog -> TODO()
-            is WearableEvent.SortWearables -> TODO()
-        }
-    }
-}
-
-*/

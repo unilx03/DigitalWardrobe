@@ -7,16 +7,22 @@
 
     <fragment
         android:id="@+id/nav_dressing"
-        android:name="com.digitalwardrobe.ui.dressing.DressingTabFragment"
+        android:name="com.digitalwardrobe.ui.dressing.DressingMain"
         android:label="@string/menu_dressing"
         tools:layout="@layout/dressing_tab_layout" />
 
     <fragment
         android:id="@+id/nav_wardrobe"
-        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeTabFragment"
+        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeMain"
         android:label="@string/menu_wardrobe"
         tools:layout="@layout/wardrobe_tab_layout" >
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_stats"
+        android:name="com.digitalwardrobe.ui.stats.StatsFragment"
+        android:label="@string/menu_stats"
+        tools:layout="@layout/stats_fragment" />
 
     <fragment
         android:id="@+id/nav_wardrobe_items"
@@ -24,27 +30,19 @@
         android:label="Items"
         tools:layout="@layout/wardrobe_items_fragment">
 
-        <action
-            android:id="@+id/actionWardrobeToDetails"
-            app:destination="@id/nav_wearable_details" />
-
     </fragment>
 
     <fragment
-        android:id="@+id/nav_profile"
-        android:name="com.digitalwardrobe.ui.profile.ProfileFragment"
-        android:label="@string/menu_profile"
-        tools:layout="@layout/profile_fragment" />
+        android:id="@+id/nav_wardrobe_outfits"
+        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeOutfitsFragment"
+        android:label="Items"
+        tools:layout="@layout/wardrobe_outfits_fragment">
 
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.digitalwardrobe.SettingsFragment"
-        android:label="SettingsFragment" />
+    </fragment>
+
     <action
-        android:id="@+id/action_global_settingsFragment"
-        app:destination="@id/settingsFragment"
-        app:popUpTo="@id/settingsFragment" />
-
+        android:id="@+id/actionWardrobeToDetails"
+        app:destination="@id/nav_wearable_details" />
     <fragment
         android:id="@+id/nav_wearable_details"
         android:name="com.digitalwardrobe.ui.wardrobe.WearableDetailsFragment"
@@ -52,7 +50,30 @@
         tools:layout="@layout/wearable_details_fragment">
         <argument
             android:name="wearableId"
-            app:argType="string"/>
+            app:argType="long"/>
+    </fragment>
+
+    <action
+        android:id="@+id/actionWardrobeToOutfit"
+        app:destination="@id/nav_outfit_planner" />
+    <fragment
+        android:id="@+id/nav_outfit_planner"
+        android:name="com.digitalwardrobe.ui.wardrobe.OutfitPlannerFragment"
+        android:label="Outfit Planner"
+        tools:layout="@layout/outfit_planner">
+        <argument
+            android:name="outfitId"
+            app:argType="long"/>
+    </fragment>
+
+    <action
+        android:id="@+id/actionOutfitPlannerToSelectWearable"
+        app:destination="@id/nav_select_wearable" />
+    <fragment
+        android:id="@+id/nav_select_wearable"
+        android:name="com.digitalwardrobe.ui.wardrobe.OutfitSelectWearableFragment"
+        android:label="Select Wearable"
+        tools:layout="@layout/outfit_select_wearable_fragment">
     </fragment>
 
 </navigation>

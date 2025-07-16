@@ -16,11 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/fragment_container_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <LinearLayout
         android:id="@+id/buttonPanel"
         android:orientation="vertical"
@@ -30,7 +25,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp">
+        android:padding="8dp"
+        android:paddingBottom="72dp">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonAddWearable"
@@ -40,15 +36,6 @@
             android:layout_margin="16dp"
             android:contentDescription="Add Wearable"
             app:srcCompat="@drawable/add_24px"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/buttonRemoveWearables"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:contentDescription="Remove Wearable"
-            app:srcCompat="@drawable/delete_24px"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

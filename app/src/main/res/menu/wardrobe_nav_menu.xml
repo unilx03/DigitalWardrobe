@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/wardrobe_wearables"
+        android:icon="@drawable/apparel_24px"
+        android:title="Wearables" />
+    <item
+        android:id="@+id/wardrobe_outfits"
+        android:icon="@drawable/styler_24px"
+        android:title="Outfits" />
+</menu>
