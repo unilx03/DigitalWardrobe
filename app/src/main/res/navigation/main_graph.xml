@@ -62,8 +62,8 @@
         android:label="Outfit Planner"
         tools:layout="@layout/outfit_planner">
         <argument
-            android:name="outfitId"
-            app:argType="long"/>
+            android:name="outfit"
+            app:argType="com.digitalwardrobe.data.Outfit"/>
     </fragment>
 
     <action

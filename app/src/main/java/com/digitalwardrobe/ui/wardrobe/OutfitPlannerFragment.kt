@@ -22,36 +22,51 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.digitalwardrobe.R
+import com.digitalwardrobe.data.DigitalWardrobeRoomDatabase
 import com.digitalwardrobe.data.Outfit
 import com.digitalwardrobe.data.OutfitViewModel
 import com.digitalwardrobe.data.OutfitViewModelFactory
 import com.digitalwardrobe.data.OutfitWearable
 import com.digitalwardrobe.data.OutfitWearableViewModel
+import com.digitalwardrobe.data.OutfitWearableViewModelFactory
+import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableDao
-import com.digitalwardrobe.data.WearableRoomDatabase
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
+//needed to keep track of last position that is not saved on db
+class OutfitCanvasViewModel : ViewModel() {
+    val savedWearableStates = MutableLiveData<List<Bundle>>()
+}
+
 class OutfitPlannerFragment : Fragment(){
+    private val canvasViewModel: OutfitCanvasViewModel by viewModels()
+
     private lateinit var canvas: FrameLayout
-    private lateinit var wearableDao: WearableDao
+    private lateinit var currentOutfit: Outfit
 
     private lateinit var outfitViewModel: OutfitViewModel
     private lateinit var wearableViewModel: WearableViewModel
     private lateinit var outfitWearableViewModel: OutfitWearableViewModel
 
     private val args: OutfitPlannerFragmentArgs by navArgs()
+    private val wearableMap = mutableMapOf<ImageView, OutfitWearable>()
     private var selectedWearableImage: ImageView? = null
 
     override fun onCreateView(
@@ -70,42 +85,73 @@ class OutfitPlannerFragment : Fragment(){
             OutfitViewModelFactory(requireActivity().application)
         )[OutfitViewModel::class.java]
 
-        val db = WearableRoomDatabase.getDatabase(requireContext())
-        wearableDao = db.wearableDao()
-
         wearableViewModel = ViewModelProvider(
             requireActivity(),
             WearableViewModelFactory(requireActivity().application)
         )[WearableViewModel::class.java]
 
-        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getLiveData<String>("wearableId")?.observe(viewLifecycleOwner) { wearableId ->
-            if (wearableId != null) {
-                wearableViewModel.getWearableById(wearableId.toLong()).observe(viewLifecycleOwner) { wearable ->
-                    wearable?.image?.takeIf { it.isNotBlank() }?.let { imageString ->
-                        val uri = Uri.parse(imageString)
-                        val newWearableImageView =
-                            addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
+        outfitWearableViewModel = ViewModelProvider(
+            requireActivity(),
+            OutfitWearableViewModelFactory(requireActivity().application)
+        )[OutfitWearableViewModel::class.java]
 
-                        val outfitWearable = OutfitWearable(
-                            outfitId = args.outfitId,
-                            wearableId = wearable.id, // get from existing wearable
-                            wearableX = newWearableImageView.x,
-                            wearableY = newWearableImageView.y,
-                            wearableScale = newWearableImageView.scaleX, // assume uniform scale
-                            wearableZIndex = canvas.indexOfChild(newWearableImageView),
-                        )
+        canvas = view.findViewById(R.id.canvas)
+        currentOutfit = args.outfit
 
-                        // Save to DB or ViewModel here
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            outfitWearableViewModel.insert(outfitWearable)
-                        }
-                    }
+        lifecycleScope.launch {
+            val savedStates = canvasViewModel.savedWearableStates.value?.associateBy { it.getLong("wearableId") } ?: emptyMap()
+
+            // Fetch all outfit wearables for the given outfitId
+            val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
+
+            outfitWearables.forEach { ow ->
+                val wearable = wearableViewModel.getWearableById(ow.wearableId)
+                if (wearable != null && wearable.image.isNotBlank()) {
+                    val uri = Uri.parse(wearable.image)
+
+                    // If a saved state exists, use its values
+                    val savedState = savedStates[ow.wearableId]
+                    val x = savedState?.getFloat("x") ?: ow.wearableX
+                    val y = savedState?.getFloat("y") ?: ow.wearableY
+                    val scale = savedState?.getFloat("scale") ?: ow.wearableScale
+                    val zIndex = savedState?.getInt("zIndex") ?: ow.wearableZIndex
+
+                    val imageView = addImageToCanvas(uri, x, y, scale, zIndex)
+                    wearableMap[imageView] = ow.copy(
+                        wearableX = x,
+                        wearableY = y,
+                        wearableScale = scale,
+                        wearableZIndex = zIndex
+                    )
                 }
             }
         }
 
-        canvas = view.findViewById(R.id.canvas)
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<String>("wearableId")?.observe(viewLifecycleOwner) { wearableId ->
+            if (wearableId != null) {
+                lifecycleScope.launch {
+                    val wearable = wearableViewModel.getWearableById(wearableId.toLong())
+
+                    val uri = Uri.parse(wearable.image)
+                    val newWearableImageView = addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
+
+                    val outfitWearable = OutfitWearable(
+                        outfitId = args.outfit.id,
+                        wearableId = wearable.id,
+                        wearableX = newWearableImageView.x,
+                        wearableY = newWearableImageView.y,
+                        wearableScale = newWearableImageView.scaleX,
+                        wearableZIndex = canvas.indexOfChild(newWearableImageView)
+                    )
+                    wearableMap[newWearableImageView] = outfitWearable
+
+                    // Save to DB or ViewModel here
+                    outfitWearableViewModel.insert(outfitWearable)
+                }
+            }
+        }
+
         val btnAddWearable: MaterialButton = view.findViewById(R.id.btnAddWearable)
         btnAddWearable.setOnClickListener {
             val action = OutfitPlannerFragmentDirections.actionOutfitPlannerToSelectWearable()
@@ -114,7 +160,7 @@ class OutfitPlannerFragment : Fragment(){
 
         val btnSave: MaterialButton = view.findViewById(R.id.btnSave)
         btnSave.setOnClickListener {
-
+            updateOutfit()
         }
 
         val btnDelete: MaterialButton = view.findViewById(R.id.btnDelete)
@@ -133,50 +179,44 @@ class OutfitPlannerFragment : Fragment(){
 
         val btnMoveUpLayer = view.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)
         btnMoveUpLayer?.isEnabled = false
-        btnDelete.setOnClickListener {
-
+        btnMoveUpLayer.setOnClickListener {
+            val currentIndex = canvas.indexOfChild(selectedWearableImage)
+            if (currentIndex < canvas.childCount - 1) {
+                canvas.removeView(selectedWearableImage)
+                canvas.addView(selectedWearableImage, currentIndex + 1)
+            }
         }
 
         val btnMoveDownLayer = view.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)
         btnMoveDownLayer?.isEnabled = false
-        btnDelete.setOnClickListener {
-
+        btnMoveDownLayer.setOnClickListener {
+            val currentIndex = canvas.indexOfChild(selectedWearableImage)
+            if (currentIndex > 0) {
+                canvas.removeView(selectedWearableImage)
+                canvas.addView(selectedWearableImage, currentIndex - 1)
+            }
         }
 
         val btnDeleteWearable = view.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)
         btnDeleteWearable?.isEnabled = false
-        btnDelete.setOnClickListener {
-            selectedWearableImage?.let {
-                canvas.removeView(it)
-                selectedWearableImage = null
-                btnDeleteWearable.isEnabled = false
-            }
+        btnDeleteWearable.setOnClickListener {
+            deleteOutfitWearable()
         }
-
-        /*viewModel.getWearablesForOutfit(outfitId).observe(viewLifecycleOwner) { list ->
-            list.forEach { ow ->
-                viewModel.getWearableById(ow.wearableId).observe(viewLifecycleOwner) { wearable ->
-                    val uri = Uri.parse(wearable.image)
-                    addImageToCanvas(uri, ow.posX, ow.posY, ow.scale, ow.zIndex)
-                }
-            }
-        }*/
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onPause() {
+        super.onPause()
 
-        if (canvas.childCount == 0) {
-            val outfitId = args.outfitId.toLong()
-            outfitViewModel.getOutfitById(outfitId).observe(viewLifecycleOwner) { outfit : Outfit? ->
-                if (outfit != null && outfit.preview.isBlank()) {
-                    // No preview and no items – delete it
-                    lifecycleScope.launch {
-                        outfitViewModel.delete(outfit)
-                    }
-                }
+        val wearableStates = wearableMap.map { (imageView, outfitWearable) ->
+            Bundle().apply {
+                putLong("wearableId", outfitWearable.wearableId)
+                putFloat("x", imageView.x)
+                putFloat("y", imageView.y)
+                putFloat("scale", imageView.scaleX)
+                putInt("zIndex", canvas.indexOfChild(imageView))
             }
         }
+        canvasViewModel.savedWearableStates.value = wearableStates
     }
 
     private fun addImageToCanvas(uri: Uri, x: Float, y: Float, scale: Float, zIndex: Int) : ImageView {
@@ -196,6 +236,7 @@ class OutfitPlannerFragment : Fragment(){
         })
 
         canvas.addView(imageView, zIndex)
+
         return imageView;
     }
 
@@ -213,6 +254,51 @@ class OutfitPlannerFragment : Fragment(){
         view?.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)?.isEnabled = true
     }
 
+    private fun deselectImage() {
+        // Update selected
+        selectedWearableImage = null
+
+        // Enable buttons
+        view?.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)?.isEnabled = false
+        view?.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)?.isEnabled = false
+        view?.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)?.isEnabled = false
+    }
+
+    fun updateOutfit() {
+        for (i in 0 until canvas.childCount) {
+            val view = canvas.getChildAt(i)
+            if (view is ImageView && wearableMap.containsKey(view)) {
+                val updated = wearableMap[view]!!.copy(
+                    wearableX = view.x,
+                    wearableY = view.y,
+                    wearableScale = view.scaleX, // assume uniform scale
+                    wearableZIndex = i
+                )
+
+                wearableMap[view] = updated // update map
+                lifecycleScope.launch {
+                    outfitWearableViewModel.update(updated)
+                }
+            }
+        }
+
+        // Capture screenshot
+        val bitmap = captureCollageScreenshot(canvas)
+
+        // Save it
+        val previewUri = saveBitmapToInternalStorage(requireContext(), bitmap, "outfit_preview_${args.outfit.id}")
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Update outfit with preview image path
+            val updatedOutfit = currentOutfit.copy(
+                preview = previewUri.toString()
+            )
+
+            outfitViewModel.update(updatedOutfit)
+            Toast.makeText(requireContext(), "Outfit updated", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun captureCollageScreenshot(collageView: View): Bitmap {
         val bitmap = Bitmap.createBitmap(collageView.width, collageView.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
@@ -228,32 +314,27 @@ class OutfitPlannerFragment : Fragment(){
         return file.toUri()
     }
 
-    /*fun updateOutfit() {
-        val updatedWearable = currentWearable.copy(
-            addDate = view?.findViewById<TextInputEditText>(R.id.wearableAddDate)?.text.toString(),
-            category = view?.findViewById<AutoCompleteTextView>(R.id.wearableCategory)?.text.toString(),
-            brand = view?.findViewById<TextInputEditText>(R.id.wearableBrand)?.text.toString(),
-            price = view?.findViewById<TextInputEditText>(R.id.wearablePrice)?.text.toString().toDoubleOrNull() ?: 0.0,
-            season = view?.findViewById<AutoCompleteTextView>(R.id.wearableSeason)?.text.toString(),
-            notes = view?.findViewById<TextInputEditText>(R.id.wearableNotes)?.text.toString(),
-            colors = selectedColors.joinToString(","),
-            tags = selectedTags.joinToString(",")
-        )
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.updateWearable(updatedWearable)
-            Toast.makeText(requireContext(), "Wearable updated", Toast.LENGTH_SHORT).show()
-        }
-    }*/
-
     fun deleteOutfit() {
-        val outfitId = args.outfitId
-        outfitViewModel.getOutfitById(outfitId).observe(viewLifecycleOwner) { outfit : Outfit? ->
-            if (outfit != null && outfit.preview.isBlank()) {
-                // No preview and no items – delete it
-                lifecycleScope.launch {
-                    outfitViewModel.delete(outfit)
-                }
+        val outfitId =args.outfit.id
+        lifecycleScope.launch {
+            val outfit = outfitViewModel.getOutfitById(outfitId)
+            outfitViewModel.delete(outfit)
+            findNavController().popBackStack()
+        }
+    }
+
+    fun deleteOutfitWearable() {
+        val selectedOutfitWearable = wearableMap[selectedWearableImage]
+        wearableMap.remove(selectedWearableImage)
+
+        if (selectedOutfitWearable != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                outfitWearableViewModel.delete(selectedOutfitWearable)
+            }
+
+            selectedWearableImage?.let {
+                canvas.removeView(it)
+                deselectImage()
             }
         }
     }

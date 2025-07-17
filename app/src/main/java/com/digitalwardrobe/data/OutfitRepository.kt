@@ -18,7 +18,7 @@ class OutfitRepository(app: Application, private val dao: OutfitDao) {
         dao.delete(outfit)
     }
 
-    fun getOutfitById(id: Long): LiveData<Outfit?> {
+    suspend fun getOutfitById(id: Long): Outfit {
         return dao.getOutfitById(id)
     }
 }

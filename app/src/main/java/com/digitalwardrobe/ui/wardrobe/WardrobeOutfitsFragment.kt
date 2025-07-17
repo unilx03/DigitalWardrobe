@@ -59,11 +59,19 @@ class WardrobeOutfitsFragment : Fragment() {
         outfitViewModel.allOutfits.observe(viewLifecycleOwner) { outfits ->
             Log.v("LABEL", "Items received: ${outfits.size}")
 
+            outfits.forEach { outfit ->
+                if (outfit.preview.isNullOrEmpty()) {
+                    lifecycleScope.launch {
+                        outfitViewModel.delete(outfit)
+                    }
+                }
+            }
+
             outfitAdapter.updateData(outfits)
         }
 
         outfitAdapter.onItemClick = { selectedOutfit ->
-            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(selectedOutfit.id)
+            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(selectedOutfit)
             requireActivity().findNavController(R.id.nav_host_fragment).navigate(action)
         }
 
@@ -78,13 +86,14 @@ class WardrobeOutfitsFragment : Fragment() {
         val todayDate = dateFormat.format(Date())
 
         val newOutfit = Outfit(
-            name = "",
-            preview = "android.resource://${requireContext().packageName}/${R.drawable.ic_launcher_foreground}",
+            preview = null.toString(),
             addDate = todayDate,
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(outfitViewModel.insert(newOutfit))
+            val outfitId = outfitViewModel.insert(newOutfit)
+            val fullOutfit = newOutfit.copy(id = outfitId)
+            val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(fullOutfit)
             findNavController().navigate(action)
         }
     }

@@ -17,9 +17,6 @@ interface WearableDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(wearable: Wearable) : Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertMultiple(wearables: List<Wearable>)
-
     @Update
     suspend fun update(wearable: Wearable)
 
@@ -33,5 +30,5 @@ interface WearableDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM wearable_table WHERE id = :id")
-    fun getWearableById(id: Long): LiveData<Wearable>
+    suspend fun getWearableById(id: Long): Wearable
 }

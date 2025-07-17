@@ -1,6 +1,12 @@
 package com.digitalwardrobe.data
 
+import android.content.ContentResolver
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +15,7 @@ import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.digitalwardrobe.R
+import java.io.File
 
 class OutfitViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     val rvImage: ImageView = itemView.findViewById(R.id.image)
@@ -24,9 +31,17 @@ class OutfitAdapter(private var dataList: List<Outfit>): RecyclerView.Adapter<Ou
 
     override fun onBindViewHolder(holder: OutfitViewHolder, position: Int) {
         val currentItem = dataList[position]
-        val inputStream = holder.itemView.context.contentResolver.openInputStream(currentItem.preview.toUri())
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        holder.rvImage.setImageBitmap(bitmap)
+        val context = holder.itemView.context
+
+        val file = File(context.filesDir, "outfit_preview_${currentItem.id}.png")
+
+        if (file.exists()) {
+            // Load bitmap from file directly
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            holder.rvImage.setImageBitmap(bitmap)
+        } else {
+            holder.rvImage.setImageResource(R.drawable.ic_launcher_foreground) // fallback if file missing
+        }
 
         holder.itemView.setOnClickListener{
             onItemClick?.invoke(currentItem)

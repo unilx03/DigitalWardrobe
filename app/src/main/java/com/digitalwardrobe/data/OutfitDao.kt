@@ -17,9 +17,6 @@ interface OutfitDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(outfit: Outfit) : Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertMultiple(outfits: List<Outfit>)
-
     @Update
     suspend fun update(outfit: Outfit)
 
@@ -30,5 +27,5 @@ interface OutfitDao {
     suspend fun deleteList(outfitList: List<Outfit>)
 
     @Query("SELECT * FROM outfit_table WHERE id = :id")
-    fun getOutfitById(id: Long): LiveData<Outfit?>
+    suspend fun getOutfitById(id: Long): Outfit
 }

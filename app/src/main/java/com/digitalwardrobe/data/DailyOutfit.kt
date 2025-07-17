@@ -14,7 +14,7 @@ import java.util.Date
 @Entity(
     tableName = "daily_outfits_table",
     foreignKeys = [
-        ForeignKey(entity = Outfit::class, parentColumns = ["id"], childColumns = ["outfitId"]),
+        ForeignKey(entity = Outfit::class, parentColumns = ["id"], childColumns = ["outfit_id"]),
     ]
 )
 @Parcelize

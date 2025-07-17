@@ -11,22 +11,22 @@ import java.io.Serializable
 
 @Entity(
     tableName = "outfit_wearable_table",
-    foreignKeys = [
-        ForeignKey(entity = Outfit::class, parentColumns = ["id"], childColumns = ["outfitId"]),
-        ForeignKey(entity = Wearable::class, parentColumns = ["id"], childColumns = ["wearableId"])
-    ]
+    /*foreignKeys = [
+        ForeignKey(entity = Outfit::class, parentColumns = ["id"], childColumns = ["outfit_id"]),
+        ForeignKey(entity = Wearable::class, parentColumns = ["id"], childColumns = ["wearable_id"])
+    ]*/
 )
 @Parcelize
 data class OutfitWearable(
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
     @ColumnInfo(name = "outfit_id")
-    var outfitId: Long,
+    val outfitId: Long,
 
     @ColumnInfo(name = "wearable_id")
-    var wearableId: Long,
+    val wearableId: Long,
 
     @NonNull
     @ColumnInfo(name = "wearable_x")

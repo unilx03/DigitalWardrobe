@@ -12,8 +12,12 @@ class OutfitWearableRepository(app: Application, private val dao: OutfitWearable
         return dao.insert(outfitWearable)
     }
 
-    fun getWearablesForOutfit(outfitId: Long): LiveData<List<OutfitWearable>> {
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable> {
         return dao.getWearablesForOutfit(outfitId)
+    }
+
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable {
+        return dao.getWearableForOutfit(outfitId, wearableId)
     }
 
     suspend fun update(outfitWearable: OutfitWearable) {

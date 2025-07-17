@@ -9,15 +9,27 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 // exportSchema set to false to avoid DB migrations
-@Database(entities = [Outfit::class], version = 1, exportSchema = false)
-abstract class OutfitRoomDatabase : RoomDatabase() {
+@Database(
+    entities = [
+        Outfit::class,
+        Wearable::class,
+        OutfitWearable::class,
+        DailyOutfit::class,
+    ],
+    version = 1,
+    exportSchema = false
+)
 
+abstract class DigitalWardrobeRoomDatabase : RoomDatabase() {
+
+    abstract fun wearableDao(): WearableDao
     abstract fun outfitDao(): OutfitDao
+    abstract fun outfitWearableDao(): OutfitWearableDao
 
     companion object {
 
         @Volatile
-        private var INSTANCE: OutfitRoomDatabase? = null
+        private var INSTANCE: DigitalWardrobeRoomDatabase? = null
 
         private const val nThreads: Int = 4
         val databaseWriteExecutor: ExecutorService = Executors.newFixedThreadPool(nThreads)
@@ -45,16 +57,24 @@ abstract class OutfitRoomDatabase : RoomDatabase() {
             }
         }*/
 
-        fun getDatabase(context: Context): OutfitRoomDatabase {
+        fun getDatabase(context: Context): DigitalWardrobeRoomDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    OutfitRoomDatabase::class.java,
-                    "outfit_database"
-                ).build()
+                    DigitalWardrobeRoomDatabase::class.java,
+                    "digital_wardrobe_database"
+                )
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onOpen(db: SupportSQLiteDatabase) {
+                            super.onOpen(db)
+                            db.execSQL("PRAGMA foreign_keys=ON;")
+                        }
+                    })
+                    .build()
                 INSTANCE = instance
                 instance
             }
         }
+
     }
 }

@@ -15,7 +15,7 @@ class OutfitWearableViewModel(application: Application) : ViewModel() {
     val allOutfitWearables: LiveData<List<OutfitWearable>>
 
     init {
-        val dao = OutfitWearableRoomDatabase.getDatabase(application).outfitWearableDao()
+        val dao = DigitalWardrobeRoomDatabase.getDatabase(application).outfitWearableDao()
         repository = OutfitWearableRepository(application, dao)
         allOutfitWearables = repository.allOutfitWearables
     }
@@ -24,8 +24,12 @@ class OutfitWearableViewModel(application: Application) : ViewModel() {
         return repository.insert(outfitWearable)
     }
 
-    fun getWearablesForOutfit(outfitId: Long): LiveData<List<OutfitWearable>> {
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable> {
         return repository.getWearablesForOutfit(outfitId)
+    }
+
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable {
+        return repository.getWearableForOutfit(outfitId, wearableId)
     }
 
     suspend fun update(outfitWearable: OutfitWearable) {

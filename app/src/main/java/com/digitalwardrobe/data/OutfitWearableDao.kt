@@ -20,7 +20,10 @@ interface OutfitWearableDao {
     suspend fun update(outfitWearable: OutfitWearable)
 
     @Query("SELECT * FROM outfit_wearable_table WHERE outfit_id = :outfitId")
-    fun getWearablesForOutfit(outfitId: Long): LiveData<List<OutfitWearable>>
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable>
+
+    @Query("SELECT * FROM outfit_wearable_table WHERE outfit_id = :outfitId AND wearable_id = :wearableId")
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable
 
     @Delete
     suspend fun delete(outfitWearable: OutfitWearable)
