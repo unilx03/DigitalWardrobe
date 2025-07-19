@@ -1,25 +1,19 @@
 package com.digitalwardrobe.ui.wardrobe
 
-import com.digitalwardrobe.ui.wardrobe.DragResizeTouchListener
-import android.app.Activity
+import com.digitalwardrobe.DragResizeTouchListener
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,23 +24,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.digitalwardrobe.R
-import com.digitalwardrobe.data.DigitalWardrobeRoomDatabase
 import com.digitalwardrobe.data.Outfit
 import com.digitalwardrobe.data.OutfitViewModel
 import com.digitalwardrobe.data.OutfitViewModelFactory
 import com.digitalwardrobe.data.OutfitWearable
 import com.digitalwardrobe.data.OutfitWearableViewModel
 import com.digitalwardrobe.data.OutfitWearableViewModelFactory
-import com.digitalwardrobe.data.Wearable
-import com.digitalwardrobe.data.WearableDao
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 
@@ -105,24 +93,26 @@ class OutfitPlannerFragment : Fragment(){
             val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
 
             outfitWearables.forEach { ow ->
-                val wearable = wearableViewModel.getWearableById(ow.wearableId)
-                if (wearable != null && wearable.image.isNotBlank()) {
-                    val uri = Uri.parse(wearable.image)
+                if (ow != null) {
+                    val wearable = wearableViewModel.getWearableById(ow.wearableId)
+                    if (wearable != null && wearable.image.isNotBlank()) {
+                        val uri = Uri.parse(wearable.image)
 
-                    // If a saved state exists, use its values
-                    val savedState = savedStates[ow.wearableId]
-                    val x = savedState?.getFloat("x") ?: ow.wearableX
-                    val y = savedState?.getFloat("y") ?: ow.wearableY
-                    val scale = savedState?.getFloat("scale") ?: ow.wearableScale
-                    val zIndex = savedState?.getInt("zIndex") ?: ow.wearableZIndex
+                        // If a saved state exists, use its values
+                        val savedState = savedStates[ow.wearableId]
+                        val x = savedState?.getFloat("x") ?: ow.wearableX
+                        val y = savedState?.getFloat("y") ?: ow.wearableY
+                        val scale = savedState?.getFloat("scale") ?: ow.wearableScale
+                        val zIndex = savedState?.getInt("zIndex") ?: ow.wearableZIndex
 
-                    val imageView = addImageToCanvas(uri, x, y, scale, zIndex)
-                    wearableMap[imageView] = ow.copy(
-                        wearableX = x,
-                        wearableY = y,
-                        wearableScale = scale,
-                        wearableZIndex = zIndex
-                    )
+                        val imageView = addImageToCanvas(uri, x, y, scale, zIndex)
+                        wearableMap[imageView] = ow.copy(
+                            wearableX = x,
+                            wearableY = y,
+                            wearableScale = scale,
+                            wearableZIndex = zIndex
+                        )
+                    }
                 }
             }
         }
@@ -131,23 +121,31 @@ class OutfitPlannerFragment : Fragment(){
         savedStateHandle?.getLiveData<String>("wearableId")?.observe(viewLifecycleOwner) { wearableId ->
             if (wearableId != null) {
                 lifecycleScope.launch {
-                    val wearable = wearableViewModel.getWearableById(wearableId.toLong())
+                    val outfitWearable = outfitWearableViewModel.getWearableForOutfit(args.outfit.id, wearableId.toLong())
+                    if (outfitWearable == null) {
+                        val wearable = wearableViewModel.getWearableById(wearableId.toLong())
 
-                    val uri = Uri.parse(wearable.image)
-                    val newWearableImageView = addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
+                        if (wearable != null) {
+                            val uri = Uri.parse(wearable.image)
+                            val newWearableImageView = addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
 
-                    val outfitWearable = OutfitWearable(
-                        outfitId = args.outfit.id,
-                        wearableId = wearable.id,
-                        wearableX = newWearableImageView.x,
-                        wearableY = newWearableImageView.y,
-                        wearableScale = newWearableImageView.scaleX,
-                        wearableZIndex = canvas.indexOfChild(newWearableImageView)
-                    )
-                    wearableMap[newWearableImageView] = outfitWearable
+                            val newOutfitWearable = OutfitWearable(
+                                outfitId = args.outfit.id,
+                                wearableId = wearable.id,
+                                wearableX = newWearableImageView.x,
+                                wearableY = newWearableImageView.y,
+                                wearableScale = newWearableImageView.scaleX,
+                                wearableZIndex = canvas.indexOfChild(newWearableImageView)
+                            )
+                            wearableMap[newWearableImageView] = newOutfitWearable
 
-                    // Save to DB or ViewModel here
-                    outfitWearableViewModel.insert(outfitWearable)
+                            // Save to DB or ViewModel here
+                            outfitWearableViewModel.insert(newOutfitWearable)
+                        }
+                    }
+                    else {
+                        Toast.makeText(requireContext(), "Wearable already added", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -178,7 +176,6 @@ class OutfitPlannerFragment : Fragment(){
         }
 
         val btnMoveUpLayer = view.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)
-        btnMoveUpLayer?.isEnabled = false
         btnMoveUpLayer.setOnClickListener {
             val currentIndex = canvas.indexOfChild(selectedWearableImage)
             if (currentIndex < canvas.childCount - 1) {
@@ -188,7 +185,6 @@ class OutfitPlannerFragment : Fragment(){
         }
 
         val btnMoveDownLayer = view.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)
-        btnMoveDownLayer?.isEnabled = false
         btnMoveDownLayer.setOnClickListener {
             val currentIndex = canvas.indexOfChild(selectedWearableImage)
             if (currentIndex > 0) {
@@ -198,10 +194,11 @@ class OutfitPlannerFragment : Fragment(){
         }
 
         val btnDeleteWearable = view.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)
-        btnDeleteWearable?.isEnabled = false
         btnDeleteWearable.setOnClickListener {
             deleteOutfitWearable()
         }
+
+        deselectImage()
     }
 
     override fun onPause() {
@@ -255,6 +252,9 @@ class OutfitPlannerFragment : Fragment(){
     }
 
     private fun deselectImage() {
+        // Clear previous selection
+        selectedWearableImage?.background = null
+
         // Update selected
         selectedWearableImage = null
 
@@ -265,6 +265,8 @@ class OutfitPlannerFragment : Fragment(){
     }
 
     fun updateOutfit() {
+        deselectImage()
+
         for (i in 0 until canvas.childCount) {
             val view = canvas.getChildAt(i)
             if (view is ImageView && wearableMap.containsKey(view)) {
@@ -315,10 +317,20 @@ class OutfitPlannerFragment : Fragment(){
     }
 
     fun deleteOutfit() {
-        val outfitId =args.outfit.id
-        lifecycleScope.launch {
+        val outfitId = args.outfit.id
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
+            outfitWearables.forEach { ow ->
+                if (ow != null)
+                    outfitWearableViewModel.delete(ow)
+            }
+
             val outfit = outfitViewModel.getOutfitById(outfitId)
-            outfitViewModel.delete(outfit)
+
+            if (outfit != null)
+                outfitViewModel.delete(outfit)
+
             findNavController().popBackStack()
         }
     }

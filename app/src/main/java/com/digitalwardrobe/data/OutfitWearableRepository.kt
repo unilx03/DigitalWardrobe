@@ -6,17 +6,15 @@ import androidx.room.Delete
 import androidx.room.Query
 
 class OutfitWearableRepository(app: Application, private val dao: OutfitWearableDao) {
-    val allOutfitWearables: LiveData<List<OutfitWearable>> = dao.getAllOutfitWearables()
-
     suspend fun insert(outfitWearable: OutfitWearable) : Long {
         return dao.insert(outfitWearable)
     }
 
-    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable> {
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable?> {
         return dao.getWearablesForOutfit(outfitId)
     }
 
-    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable {
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable? {
         return dao.getWearableForOutfit(outfitId, wearableId)
     }
 

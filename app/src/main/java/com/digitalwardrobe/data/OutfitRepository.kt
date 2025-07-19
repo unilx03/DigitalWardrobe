@@ -4,7 +4,9 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 
 class OutfitRepository(app: Application, private val dao: OutfitDao) {
-    val allOutfits: LiveData<List<Outfit>> = dao.getAllOutfits()
+    suspend fun getAllOutfits() : List<Outfit> {
+        return dao.getAllOutfits()
+    }
 
     suspend fun insert(outfit: Outfit) : Long {
         return dao.insert(outfit)
@@ -18,7 +20,7 @@ class OutfitRepository(app: Application, private val dao: OutfitDao) {
         dao.delete(outfit)
     }
 
-    suspend fun getOutfitById(id: Long): Outfit {
+    suspend fun getOutfitById(id: Long): Outfit? {
         return dao.getOutfitById(id)
     }
 }

@@ -12,7 +12,7 @@ import androidx.room.Update
 interface WearableDao {
 
     @Query("SELECT * FROM wearable_table")
-    fun getAllWearables(): LiveData<List<Wearable>>
+    suspend fun getAllWearables(): List<Wearable>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(wearable: Wearable) : Long
@@ -30,5 +30,5 @@ interface WearableDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM wearable_table WHERE id = :id")
-    suspend fun getWearableById(id: Long): Wearable
+    suspend fun getWearableById(id: Long): Wearable?
 }

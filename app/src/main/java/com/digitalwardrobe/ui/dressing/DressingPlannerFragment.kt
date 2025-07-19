@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.digitalwardrobe.R
 
 class DressingPlannerFragment : Fragment(){
-    //private lateinit var canvas: FrameLayout
+    private lateinit var calendarView : CalendarView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -21,46 +23,11 @@ class DressingPlannerFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        /*canvas = view.findViewById(R.id.canvas)
-        val btnAddImage: Button = view.findViewById(R.id.btnAddImage)
+        calendarView = view.findViewById(R.id.calendarView)
+        val dateText : TextView = view.findViewById(R.id.testDate)
 
-        var resultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    // There are no request codes
-                    val data: Intent? = result.data
-                    val uri = data?.data
-
-                    if (uri != null) {
-                        addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
-                    }
-                } }
-
-        btnAddImage.setOnClickListener {
-            Log.v("LABEL", "btn clicked")
-            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "image"
-                addCategory(Intent.CATEGORY_OPENABLE)
-            }
-            resultLauncher.launch(intent)
-        }*/
-    }
-
-    /*private fun addImageToCanvas(uri: Uri?, x: Float, y: Float, scale: Float, zIndex: Int) {
-        if (uri == null) return
-
-        val imageView = ImageView(requireContext()).apply {
-            setImageURI(uri)
-            layoutParams = FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                leftMargin = x.toInt()
-                topMargin = y.toInt()
-            }
-            scaleX = scale
-            scaleY = scale
-            tag = uri.toString()  // used for saving
+        calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            dateText.text = "Selected date: $dayOfMonth/${month + 1}/$year"
         }
-
-        imageView.setOnTouchListener(DragResizeTouchListener())
-        canvas.addView(imageView, zIndex)
-    }*/
+    }
 }

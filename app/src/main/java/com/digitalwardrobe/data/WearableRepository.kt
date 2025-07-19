@@ -4,7 +4,9 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 
 class WearableRepository(app: Application, private val dao: WearableDao) {
-    val allWearables: LiveData<List<Wearable>> = dao.getAllWearables()
+    suspend fun getAllWearables() : List<Wearable> {
+        return dao.getAllWearables()
+    }
 
     suspend fun insert(wearable: Wearable) : Long {
         return dao.insert(wearable)
@@ -18,7 +20,7 @@ class WearableRepository(app: Application, private val dao: WearableDao) {
         dao.delete(wearable)
     }
 
-    suspend fun getWearableById(id: Long): Wearable {
+    suspend fun getWearableById(id: Long): Wearable? {
         return dao.getWearableById(id)
     }
 }

@@ -11,10 +11,10 @@ import java.io.Serializable
 
 @Entity(
     tableName = "outfit_wearable_table",
-    /*foreignKeys = [
+    foreignKeys = [
         ForeignKey(entity = Outfit::class, parentColumns = ["id"], childColumns = ["outfit_id"]),
         ForeignKey(entity = Wearable::class, parentColumns = ["id"], childColumns = ["wearable_id"])
-    ]*/
+    ]
 )
 @Parcelize
 data class OutfitWearable(

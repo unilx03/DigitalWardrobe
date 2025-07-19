@@ -42,6 +42,11 @@ class DressingMain : Fragment() {
                 else -> DressingPlannerFragment()
             }
 
+            val currentFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_container)
+            if (currentFragment is SaveableFragment) {
+                currentFragment.saveState()
+            }
+
             childFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_container, selectedFragment)
                 .commit()

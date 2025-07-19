@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,6 +22,7 @@ import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -53,8 +55,8 @@ class OutfitSelectWearableFragment : Fragment(){
             WearableViewModelFactory(requireActivity().application)
         )[WearableViewModel::class.java]
 
-        //observe LiveData and insert/delete items
-        wearableViewModel.allWearables.observe(viewLifecycleOwner) { wearables ->
+        viewLifecycleOwner.lifecycleScope.launch{
+            val wearables = wearableViewModel.getAllWearables()
             Log.v("LABEL", "Items received: ${wearables.size}")
 
             wearableAdapter.updateData(wearables)

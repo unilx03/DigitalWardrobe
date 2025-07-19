@@ -23,10 +23,10 @@ import com.digitalwardrobe.data.OutfitViewModel
 import com.digitalwardrobe.data.OutfitViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 class WardrobeOutfitsFragment : Fragment() {
     private lateinit var outfitViewModel: OutfitViewModel
@@ -55,19 +55,26 @@ class WardrobeOutfitsFragment : Fragment() {
             OutfitViewModelFactory(requireActivity().application)
         )[OutfitViewModel::class.java]
 
-        //observe LiveData and insert/delete items
-        outfitViewModel.allOutfits.observe(viewLifecycleOwner) { outfits ->
+        viewLifecycleOwner.lifecycleScope.launch observe@{
+            val outfits = outfitViewModel.getAllOutfits()
             Log.v("LABEL", "Items received: ${outfits.size}")
 
+            val context = view?.context ?: return@observe
+            val validOutfits = mutableListOf<Outfit>()
+
             outfits.forEach { outfit ->
-                if (outfit.preview.isNullOrEmpty()) {
+                val file = File(context.filesDir, "outfit_preview_${outfit.id}.png")
+
+                if (file.exists()) {
+                    validOutfits.add(outfit) // Keep only outfits with real preview image
+                } else {
                     lifecycleScope.launch {
                         outfitViewModel.delete(outfit)
                     }
                 }
             }
 
-            outfitAdapter.updateData(outfits)
+            outfitAdapter.updateData(validOutfits)
         }
 
         outfitAdapter.onItemClick = { selectedOutfit ->

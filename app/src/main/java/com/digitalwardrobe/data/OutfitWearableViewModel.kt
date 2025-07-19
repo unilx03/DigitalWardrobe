@@ -12,23 +12,21 @@ import kotlinx.coroutines.launch
 class OutfitWearableViewModel(application: Application) : ViewModel() {
 
     private val repository: OutfitWearableRepository
-    val allOutfitWearables: LiveData<List<OutfitWearable>>
 
     init {
         val dao = DigitalWardrobeRoomDatabase.getDatabase(application).outfitWearableDao()
         repository = OutfitWearableRepository(application, dao)
-        allOutfitWearables = repository.allOutfitWearables
     }
 
     suspend fun insert(outfitWearable: OutfitWearable) : Long {
         return repository.insert(outfitWearable)
     }
 
-    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable> {
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable?> {
         return repository.getWearablesForOutfit(outfitId)
     }
 
-    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable {
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable? {
         return repository.getWearableForOutfit(outfitId, wearableId)
     }
 

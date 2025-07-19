@@ -137,63 +137,66 @@ class WearableDetailsFragment : Fragment() {
 
         lifecycleScope.launch {
             val wearable = viewModel.getWearableById(wearableId)
-            // Load image
-            val bitmap = BitmapFactory.decodeStream(
-                context?.contentResolver?.openInputStream(wearable.image.toUri())
-            )
-            view.findViewById<ImageView>(R.id.wearableImage).setImageBitmap(bitmap)
 
-            // Set basic fields
-            view.findViewById<TextInputEditText>(R.id.wearableBrand).setText(wearable.brand)
-            if (wearable.price != 0.0)
-                view.findViewById<TextInputEditText>(R.id.wearablePrice)
-                    .setText(wearable.price.toString())
-            view.findViewById<AutoCompleteTextView>(R.id.wearableCategory)
-                .setText(wearable.category, false)
-            view.findViewById<AutoCompleteTextView>(R.id.wearableSeason)
-                .setText(wearable.season, false)
-            view.findViewById<TextInputEditText>(R.id.wearableNotes).setText(wearable.notes)
+            if (wearable != null) {
+                // Load image
+                val bitmap = BitmapFactory.decodeStream(
+                    context?.contentResolver?.openInputStream(wearable.image.toUri())
+                )
+                view.findViewById<ImageView>(R.id.wearableImage).setImageBitmap(bitmap)
 
-            // Populate color chips
-            val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
-            selectedColors.clear()
-            colorChipGroup.removeAllViews()
-            wearable.colors.split(",").forEach { color ->
-                if (color.isNotBlank()) {
-                    selectedColors.add(color)
-                    val chip = Chip(requireContext()).apply {
-                        text = color
-                        isCloseIconVisible = true
-                        setOnCloseIconClickListener {
-                            colorChipGroup.removeView(this)
-                            selectedColors.remove(color)
+                // Set basic fields
+                view.findViewById<TextInputEditText>(R.id.wearableBrand).setText(wearable.brand)
+                if (wearable.price != 0.0)
+                    view.findViewById<TextInputEditText>(R.id.wearablePrice)
+                        .setText(wearable.price.toString())
+                view.findViewById<AutoCompleteTextView>(R.id.wearableCategory)
+                    .setText(wearable.category, false)
+                view.findViewById<AutoCompleteTextView>(R.id.wearableSeason)
+                    .setText(wearable.season, false)
+                view.findViewById<TextInputEditText>(R.id.wearableNotes).setText(wearable.notes)
+
+                // Populate color chips
+                val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
+                selectedColors.clear()
+                colorChipGroup.removeAllViews()
+                wearable.colors.split(",").forEach { color ->
+                    if (color.isNotBlank()) {
+                        selectedColors.add(color)
+                        val chip = Chip(requireContext()).apply {
+                            text = color
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                colorChipGroup.removeView(this)
+                                selectedColors.remove(color)
+                            }
                         }
+                        colorChipGroup.addView(chip)
                     }
-                    colorChipGroup.addView(chip)
                 }
-            }
 
-            // Populate tag chips
-            val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
-            selectedTags.clear()
-            tagChipGroup.removeAllViews()
-            wearable.tags.split(",").forEach { tag ->
-                if (tag.isNotBlank()) {
-                    selectedTags.add(tag)
-                    val chip = Chip(requireContext()).apply {
-                        text = tag
-                        isCloseIconVisible = true
-                        setOnCloseIconClickListener {
-                            tagChipGroup.removeView(this)
-                            selectedTags.remove(tag)
+                // Populate tag chips
+                val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
+                selectedTags.clear()
+                tagChipGroup.removeAllViews()
+                wearable.tags.split(",").forEach { tag ->
+                    if (tag.isNotBlank()) {
+                        selectedTags.add(tag)
+                        val chip = Chip(requireContext()).apply {
+                            text = tag
+                            isCloseIconVisible = true
+                            setOnCloseIconClickListener {
+                                tagChipGroup.removeView(this)
+                                selectedTags.remove(tag)
+                            }
                         }
+                        tagChipGroup.addView(chip)
                     }
-                    tagChipGroup.addView(chip)
                 }
-            }
 
-            // Store current wearable for update
-            currentWearable = wearable
+                // Store current wearable for update
+                currentWearable = wearable
+            }
         }
     }
 

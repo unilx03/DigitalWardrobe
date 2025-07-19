@@ -10,9 +10,6 @@ import androidx.room.Update
 
 @Dao
 interface OutfitWearableDao {
-    @Query("SELECT * FROM outfit_wearable_table")
-    fun getAllOutfitWearables(): LiveData<List<OutfitWearable>>
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(outfitWearable: OutfitWearable) : Long
 
@@ -20,10 +17,10 @@ interface OutfitWearableDao {
     suspend fun update(outfitWearable: OutfitWearable)
 
     @Query("SELECT * FROM outfit_wearable_table WHERE outfit_id = :outfitId")
-    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable>
+    suspend fun getWearablesForOutfit(outfitId: Long): List<OutfitWearable?>
 
     @Query("SELECT * FROM outfit_wearable_table WHERE outfit_id = :outfitId AND wearable_id = :wearableId")
-    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable
+    suspend fun getWearableForOutfit(outfitId: Long, wearableId: Long): OutfitWearable?
 
     @Delete
     suspend fun delete(outfitWearable: OutfitWearable)

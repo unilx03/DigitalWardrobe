@@ -12,12 +12,14 @@ import kotlinx.coroutines.launch
 class WearableViewModel(application: Application) : ViewModel() {
 
     private val repository: WearableRepository
-    val allWearables: LiveData<List<Wearable>>
 
     init {
         val dao = DigitalWardrobeRoomDatabase.getDatabase(application).wearableDao()
         repository = WearableRepository(application, dao)
-        allWearables = repository.allWearables
+    }
+
+    suspend fun getAllWearables() : List<Wearable> {
+        return repository.getAllWearables()
     }
 
     suspend fun insert(wearable: Wearable) : Long {
@@ -32,7 +34,7 @@ class WearableViewModel(application: Application) : ViewModel() {
         repository.delete(wearable)
     }
 
-    suspend fun getWearableById(id: Long): Wearable {
+    suspend fun getWearableById(id: Long): Wearable? {
         return repository.getWearableById(id)
     }
 }

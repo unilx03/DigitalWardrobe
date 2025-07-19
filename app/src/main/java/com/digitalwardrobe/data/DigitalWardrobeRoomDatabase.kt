@@ -14,6 +14,7 @@ import java.util.concurrent.Executors
         Outfit::class,
         Wearable::class,
         OutfitWearable::class,
+        MoodboardItem::class,
         DailyOutfit::class,
     ],
     version = 1,
@@ -25,6 +26,8 @@ abstract class DigitalWardrobeRoomDatabase : RoomDatabase() {
     abstract fun wearableDao(): WearableDao
     abstract fun outfitDao(): OutfitDao
     abstract fun outfitWearableDao(): OutfitWearableDao
+    abstract fun moodboardItemDao(): MoodboardItemDao
+    abstract fun dailyOutfitDao(): DailyOutfitDao
 
     companion object {
 
@@ -44,18 +47,6 @@ abstract class DigitalWardrobeRoomDatabase : RoomDatabase() {
                 }
             }
         }
-
-        /*fun getDatabase(context: Context) : WearableRoomDatabase {
-            return INSTANCE ?: synchronized (this) {
-                val _INSTANCE = Room.databaseBuilder(
-                    context.applicationContext,
-                    WearableRoomDatabase::class.java,
-                    "wearable_database"
-                ).addCallback(sRoomDatabaseCallback).build()
-                INSTANCE = _INSTANCE
-                _INSTANCE
-            }
-        }*/
 
         fun getDatabase(context: Context): DigitalWardrobeRoomDatabase {
             return INSTANCE ?: synchronized(this) {

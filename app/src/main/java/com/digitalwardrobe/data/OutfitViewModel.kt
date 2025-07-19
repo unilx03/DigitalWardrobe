@@ -12,12 +12,14 @@ import kotlinx.coroutines.launch
 class OutfitViewModel(application: Application) : ViewModel() {
 
     private val repository: OutfitRepository
-    val allOutfits: LiveData<List<Outfit>>
 
     init {
         val dao = DigitalWardrobeRoomDatabase.getDatabase(application).outfitDao()
         repository = OutfitRepository(application, dao)
-        allOutfits = repository.allOutfits
+    }
+
+    suspend fun getAllOutfits() : List<Outfit> {
+        return repository.getAllOutfits()
     }
 
     suspend fun insert(outfit: Outfit): Long {
@@ -32,7 +34,7 @@ class OutfitViewModel(application: Application) : ViewModel() {
         repository.delete(outfit)
     }
 
-    suspend fun getOutfitById(id: Long): Outfit {
+    suspend fun getOutfitById(id: Long): Outfit? {
         return repository.getOutfitById(id)
     }
 }

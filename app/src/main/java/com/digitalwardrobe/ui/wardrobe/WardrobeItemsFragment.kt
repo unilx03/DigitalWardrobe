@@ -55,8 +55,8 @@ class WardrobeItemsFragment : Fragment(){
             WearableViewModelFactory(requireActivity().application)
         )[WearableViewModel::class.java]
 
-        //observe LiveData and insert/delete items
-        wearableViewModel.allWearables.observe(viewLifecycleOwner) { wearables ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            val wearables = wearableViewModel.getAllWearables()
             Log.v("LABEL", "Items received: ${wearables.size}")
 
             wearableAdapter.updateData(wearables)
@@ -84,7 +84,8 @@ class WardrobeItemsFragment : Fragment(){
                         val imageUriString = uri.toString()
                         addWearable(imageUriString)
                     }
-                } }
+                }
+            }
 
         view.findViewById<FloatingActionButton>(R.id.buttonAddWearable)?.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {

@@ -12,7 +12,7 @@ import androidx.room.Update
 interface OutfitDao {
 
     @Query("SELECT * FROM outfit_table")
-    fun getAllOutfits(): LiveData<List<Outfit>>
+    suspend fun getAllOutfits(): List<Outfit>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(outfit: Outfit) : Long
@@ -27,5 +27,5 @@ interface OutfitDao {
     suspend fun deleteList(outfitList: List<Outfit>)
 
     @Query("SELECT * FROM outfit_table WHERE id = :id")
-    suspend fun getOutfitById(id: Long): Outfit
+    suspend fun getOutfitById(id: Long): Outfit?
 }
