@@ -1,6 +1,5 @@
 package com.digitalwardrobe.ui.wardrobe
 
-import com.digitalwardrobe.DragResizeTouchListener
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
@@ -23,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.digitalwardrobe.DragResizeTouchListener
 import com.digitalwardrobe.R
 import com.digitalwardrobe.data.Outfit
 import com.digitalwardrobe.data.OutfitViewModel

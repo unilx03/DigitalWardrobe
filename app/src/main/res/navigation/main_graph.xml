@@ -3,59 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_graph"
-    app:startDestination="@+id/nav_dressing">
+    app:startDestination="@id/nav_dressing_graph">
 
-    <fragment
-        android:id="@+id/nav_dressing"
-        android:name="com.digitalwardrobe.ui.dressing.DressingMain"
-        android:label="@string/menu_dressing"
-        tools:layout="@layout/dressing_tab_layout" />
-
-    <fragment
-        android:id="@+id/nav_wardrobe"
-        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeMain"
-        android:label="@string/menu_wardrobe"
-        tools:layout="@layout/wardrobe_tab_layout" >
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_stats"
-        android:name="com.digitalwardrobe.ui.stats.StatsFragment"
-        android:label="@string/menu_stats"
-        tools:layout="@layout/stats_fragment" />
-
-    <fragment
-        android:id="@+id/nav_wardrobe_items"
-        android:name="com.digitalwardrobe.ui.wardrobe.WardrobeItemsFragment"
-        android:label="Items"
-        tools:layout="@layout/wardrobe_items_fragment">
-
-    </fragment>
+    <include app:graph="@navigation/nav_dressing_graph" />
+    <include app:graph="@navigation/nav_wardrobe_graph" />
+    <include app:graph="@navigation/nav_stats_graph" />
 
     <fragment
         android:id="@+id/nav_wardrobe_outfits"
         android:name="com.digitalwardrobe.ui.wardrobe.WardrobeOutfitsFragment"
-        android:label="Items"
-        tools:layout="@layout/wardrobe_outfits_fragment">
-
-    </fragment>
-
-    <action
-        android:id="@+id/actionWardrobeToDetails"
-        app:destination="@id/nav_wearable_details" />
-    <fragment
-        android:id="@+id/nav_wearable_details"
-        android:name="com.digitalwardrobe.ui.wardrobe.WearableDetailsFragment"
-        android:label="Wearable Details"
-        tools:layout="@layout/wearable_details_fragment">
-        <argument
-            android:name="wearableId"
-            app:argType="long"/>
-    </fragment>
+        android:label="Outfits"
+        tools:layout="@layout/wardrobe_outfits_fragment" />
 
     <action
         android:id="@+id/actionWardrobeToOutfit"
         app:destination="@id/nav_outfit_planner" />
+
+    <fragment
+        android:id="@+id/nav_dressing_calendar"
+        android:name="com.digitalwardrobe.ui.dressing.DressingCalendarFragment"
+        android:label="Calender"
+        tools:layout="@layout/dressing_calendar_fragment" />
+
+    <action
+        android:id="@+id/actionCalendarToOutfitPlanner"
+        app:destination="@id/nav_outfit_planner"    />
+
     <fragment
         android:id="@+id/nav_outfit_planner"
         android:name="com.digitalwardrobe.ui.wardrobe.OutfitPlannerFragment"

@@ -5,14 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.digitalwardrobe.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DressingMain : Fragment() {
-    private var selectedMenuId : Int = R.id.dressing_planner
+    private var selectedMenuId : Int = R.id.dressing_calendar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +26,7 @@ class DressingMain : Fragment() {
         // Set initial fragment only if savedInstanceState is null (first load)
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment_container, DressingPlannerFragment())
+                .replace(R.id.nav_host_fragment_container, DressingCalendarFragment())
                 .commit()
         }
 
@@ -37,9 +34,9 @@ class DressingMain : Fragment() {
             selectedMenuId = menuItem.itemId
 
             val selectedFragment = when (menuItem.itemId) {
-                R.id.dressing_planner -> DressingPlannerFragment()
+                R.id.dressing_calendar -> DressingCalendarFragment()
                 R.id.dressing_moodboard -> DressingMoodboardFragment()
-                else -> DressingPlannerFragment()
+                else -> DressingCalendarFragment()
             }
 
             val currentFragment = childFragmentManager.findFragmentById(R.id.nav_host_fragment_container)

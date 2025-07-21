@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.dressing.DressingPlannerFragment">
+    tools:context=".ui.dressing.DressingCalendarFragment">
 
     <CalendarView
         android:id="@+id/calendarView"
@@ -14,14 +14,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
-        android:id="@+id/testDate"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSetOutfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/calendarView"
+        android:text="Set Outfit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/calendarView"
-        />
+        app:layout_constraintBottom_toBottomOf="@id/calendarView"
+        app:layout_constraintTop_toTopOf="@id/calendarView"/>
 
     <ImageView
         android:layout_width="wrap_content"
