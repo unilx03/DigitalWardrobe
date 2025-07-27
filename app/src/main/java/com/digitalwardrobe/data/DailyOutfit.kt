@@ -19,13 +19,12 @@ import java.util.Date
 )
 @Parcelize
 data class DailyOutfit(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
     @ColumnInfo(name = "outfit_id")
     val outfitId: Long,
 
-    @NonNull
     @ColumnInfo(name = "daily_outfit_date")
     var date: String,
 

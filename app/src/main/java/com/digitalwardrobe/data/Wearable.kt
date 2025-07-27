@@ -17,7 +17,6 @@ data class Wearable(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
-    @NonNull
     @ColumnInfo(name = "wearable_image")
     var image: String,
 
@@ -39,8 +38,8 @@ data class Wearable(
     @ColumnInfo(name = "wearable_price")
     val price: Double,
 
-    @ColumnInfo(name = "wearable_season")
-    val season: String,
+    @ColumnInfo(name = "wearable_temperature")
+    val temperature: String,
 
     @ColumnInfo(name = "wearable_notes")
     val notes: String?

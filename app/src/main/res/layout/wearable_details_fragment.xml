@@ -152,15 +152,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Select season"
-            app:startIconDrawable="@drawable/apparel_24px">
+            android:hint="Select temperature"
+            app:startIconDrawable="@drawable/device_thermostat_24px">
 
             <AutoCompleteTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:importantForAccessibility="yes"
                 android:inputType="none"
-                android:id="@+id/wearableSeason"
+                android:id="@+id/wearableTemperature"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>

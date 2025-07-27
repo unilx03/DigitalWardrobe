@@ -17,7 +17,6 @@ data class Outfit(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
 
-    @NonNull
     @ColumnInfo(name = "outfit_preview")
     var preview: String,
 

@@ -22,7 +22,7 @@ interface DailyOutfitDao {
     @Query("SELECT * FROM daily_outfit_table WHERE id = :dailyOutfitId")
     suspend fun getDailyOutfitById(dailyOutfitId: Long): DailyOutfit?
 
-    @Query("SELECT * FROM daily_outfit_table WHERE id = :date")
+    @Query("SELECT * FROM daily_outfit_table WHERE daily_outfit_date = :date")
     suspend fun getDailyOutfitByDate(date: String): DailyOutfit?
 
     @Delete

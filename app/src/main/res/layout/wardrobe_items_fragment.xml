@@ -18,15 +18,16 @@
 
     <LinearLayout
         android:id="@+id/buttonPanel"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:orientation="vertical"
         android:padding="8dp"
-        android:paddingBottom="72dp">
+        android:paddingBottom="72dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/buttonAddWearable"
@@ -35,7 +36,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="Add Wearable"
-            app:srcCompat="@drawable/add_24px"/>
+            app:srcCompat="@drawable/add_24px" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -112,11 +112,11 @@ class WearableDetailsFragment : Fragment() {
         categoriesDropDown.setAdapter(adapter)
 
         //set seasons droplist options
-        items = resources.getStringArray(R.array.wearableSeasons)
+        items = resources.getStringArray(R.array.wearableTemperatures)
         adapter = ArrayAdapter(requireContext(), R.layout.droplist_item, items)
-        val seasonsDropDown: AutoCompleteTextView =
-            view.findViewById(R.id.wearableSeason)
-        seasonsDropDown.setAdapter(adapter)
+        val temperaturesDropDown: AutoCompleteTextView =
+            view.findViewById(R.id.wearableTemperature)
+        temperaturesDropDown.setAdapter(adapter)
 
         val saveButton = view.findViewById<Button>(R.id.saveButton)
         saveButton.setOnClickListener{ updateWearable() }
@@ -152,8 +152,8 @@ class WearableDetailsFragment : Fragment() {
                         .setText(wearable.price.toString())
                 view.findViewById<AutoCompleteTextView>(R.id.wearableCategory)
                     .setText(wearable.category, false)
-                view.findViewById<AutoCompleteTextView>(R.id.wearableSeason)
-                    .setText(wearable.season, false)
+                view.findViewById<AutoCompleteTextView>(R.id.wearableTemperature)
+                    .setText(wearable.temperature, false)
                 view.findViewById<TextInputEditText>(R.id.wearableNotes).setText(wearable.notes)
 
                 // Populate color chips
@@ -205,7 +205,7 @@ class WearableDetailsFragment : Fragment() {
             category = view?.findViewById<AutoCompleteTextView>(R.id.wearableCategory)?.text.toString(),
             brand = view?.findViewById<TextInputEditText>(R.id.wearableBrand)?.text.toString(),
             price = view?.findViewById<TextInputEditText>(R.id.wearablePrice)?.text.toString().toDoubleOrNull() ?: 0.0,
-            season = view?.findViewById<AutoCompleteTextView>(R.id.wearableSeason)?.text.toString(),
+            temperature = view?.findViewById<AutoCompleteTextView>(R.id.wearableTemperature)?.text.toString(),
             notes = view?.findViewById<TextInputEditText>(R.id.wearableNotes)?.text.toString(),
             colors = selectedColors.joinToString(","),
             tags = selectedTags.joinToString(",")

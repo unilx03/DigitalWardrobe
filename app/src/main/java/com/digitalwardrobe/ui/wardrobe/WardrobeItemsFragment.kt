@@ -109,7 +109,7 @@ class WardrobeItemsFragment : Fragment(){
             tags = "",
             brand = "",
             price = 0.0,
-            season = "",
+            temperature = "",
             notes = ""
         )
 

@@ -22,8 +22,12 @@
     <fragment
         android:id="@+id/nav_dressing_calendar"
         android:name="com.digitalwardrobe.ui.dressing.DressingCalendarFragment"
-        android:label="Calender"
-        tools:layout="@layout/dressing_calendar_fragment" />
+        android:label="Calendar"
+        tools:layout="@layout/dressing_calendar_fragment">
+        <argument
+            android:name="outfitId"
+            app:argType="long"/>
+    </fragment>
 
     <action
         android:id="@+id/actionCalendarToOutfitPlanner"
@@ -37,6 +41,16 @@
         <argument
             android:name="outfit"
             app:argType="com.digitalwardrobe.data.Outfit"/>
+    </fragment>
+
+    <action
+        android:id="@+id/actionCalendarToSelectOutfit"
+        app:destination="@id/nav_select_outfit" />
+    <fragment
+        android:id="@+id/nav_select_outfit"
+        android:name="com.digitalwardrobe.ui.dressing.CalendarSelectOutfitFragment"
+        android:label="Select Outfit"
+        tools:layout="@layout/calendar_select_outfit_fragment">
     </fragment>
 
     <action
