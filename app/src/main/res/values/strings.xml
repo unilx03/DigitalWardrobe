@@ -10,6 +10,7 @@
     <string name="menu_dressing">Dressing</string>
     <string name="menu_wardrobe">Wardrobe</string>
     <string name="menu_stats">Stats</string>
+    <string name="menu_map">Map</string>
     <string name="wearable_notSpecific">Not specific</string>
 
     <string name="back"><![CDATA[<-]]></string>

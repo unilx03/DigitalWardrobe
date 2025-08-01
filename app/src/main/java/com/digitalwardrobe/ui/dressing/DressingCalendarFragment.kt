@@ -20,6 +20,9 @@ import androidx.navigation.fragment.findNavController
 import android.Manifest
 import android.net.Uri
 import android.widget.Button
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.navArgs
 import androidx.room.ColumnInfo
 import com.digitalwardrobe.R
@@ -35,12 +38,14 @@ import com.digitalwardrobe.data.OutfitWearableViewModelFactory
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
+import com.digitalwardrobe.ui.wardrobe.OutfitCanvasViewModel
 import com.digitalwardrobe.ui.wardrobe.OutfitPlannerFragmentArgs
 import com.digitalwardrobe.ui.wardrobe.OutfitPlannerFragmentDirections
 import com.digitalwardrobe.ui.wardrobe.WardrobeOutfitsFragmentDirections
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -48,7 +53,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+class DressingCalendarViewModel : ViewModel() {
+    val lastSavedDate = MutableLiveData<Bundle>()
+}
+
 class DressingCalendarFragment : Fragment(){
+    private val calendarViewModel: DressingCalendarViewModel by viewModels()
+
     private lateinit var calendarView : CalendarView
     private lateinit var dailyOutfitViewModel : DailyOutfitViewModel
     private lateinit var outfitViewModel : OutfitViewModel
@@ -70,6 +81,23 @@ class DressingCalendarFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (!isAdded || context == null) return
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (ContextCompat.checkSelfPermission(
+                requireActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
+        } else {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    getWeatherByLocation(it.latitude, it.longitude)
+                }
+            }
+        }
 
         dailyOutfitViewModel = ViewModelProvider(
             requireActivity(),
@@ -94,21 +122,46 @@ class DressingCalendarFragment : Fragment(){
         outfitImageView = view.findViewById(R.id.outfitImage)
 
         calendarView = view.findViewById(R.id.calendarView)
-        calendarView.post {
-            val todayMillis = calendarView.date
-            val calendar = Calendar.getInstance().apply {
-                timeInMillis = todayMillis
+        calendarViewModel.lastSavedDate.value?.getString("lastSavedDate")?.let { saved ->
+            val savedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(saved)
+            savedDate?.let {
+                calendarView.setDate(it.time, false, true)
+
+                val calendar = Calendar.getInstance().apply { time = it }
+                onDateSelected(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
             }
-
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-            onDateSelected(year, month, day)
+        } ?: run {
+            // No saved date, so default to today
+            calendarView.post {
+                val millis = calendarView.date
+                val calendar = Calendar.getInstance().apply {
+                    timeInMillis = millis
+                }
+                onDateSelected(
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+                )
+            }
         }
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             onDateSelected(year, month, dayOfMonth)
+
+            // Save selected date to ViewModel as a string
+            val selectedDate = Calendar.getInstance().apply {
+                set(year, month, dayOfMonth)
+            }.time
+
+            val dateString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate)
+            calendarViewModel.lastSavedDate.value = Bundle().apply {
+                putString("lastSavedDate", dateString)
+            }
+            Log.v("savedDate", dateString)
         }
 
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
@@ -140,21 +193,6 @@ class DressingCalendarFragment : Fragment(){
             outfitNotPresentVisual()
             removeOutfit()
         }
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
-        } else {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    getWeatherByLocation(it.latitude, it.longitude)
-                }
-            }
-        }
     }
 
     private fun getWeatherByLocation(lat: Double, lon: Double) {
@@ -163,6 +201,7 @@ class DressingCalendarFragment : Fragment(){
                 val apiKey = getString(R.string.weatherAPIKey)
                 val response = RetrofitClient.weatherService.getCurrentWeatherByCoords(lat, lon, apiKey)
                 currentTemperature = response.main.temp
+
                 //Log.v("Weather","Temp: $temp°C\nWear: $clothes")
             } catch (e: Exception) {
                 Log.v("Weather","Error: ${e.message}")
@@ -249,11 +288,13 @@ class DressingCalendarFragment : Fragment(){
     private fun createRandomDailyOutfit() {
         viewLifecycleOwner.lifecycleScope.launch {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val todayDate = dateFormat.format(Date())
+            val calendarDateString = dateFormat.format(calendarView.date)
+
+            val calendarDate = Calendar.getInstance().apply { timeInMillis = calendarView.date }
 
             val newOutfit = Outfit(
                 preview = null.toString(),
-                addDate = todayDate,
+                addDate = calendarDateString,
             )
 
             val generatedOutfitId = outfitViewModel.insert(newOutfit)
@@ -262,8 +303,27 @@ class DressingCalendarFragment : Fragment(){
             val allWearables = wearableViewModel.getAllWearables()
             val notSpecificTemperature = getString(R.string.wearable_notSpecific)
 
+            // Get today's season
+            val todaySeason = getSeason(Calendar.getInstance())
+
+            // Get selected date's season
+            val selectedSeason = getSeason(calendarDate)
+
+            val adjustedTemperature = if (todaySeason.equals(selectedSeason, ignoreCase = true)) {
+                currentTemperature
+            } else {
+                // You can define a season-to-temperature map here
+                val seasonalTemperatureMap = mapOf(
+                    "Winter" to 0.0,
+                    "Spring" to 15.0,
+                    "Summer" to 25.0,
+                    "Autumn" to 10.0
+                )
+                seasonalTemperatureMap[selectedSeason] ?: currentTemperature
+            }
+
             val wearablesBasedOnTemperature = allWearables.filter {
-                it.temperature.equals(getClothingRecommendation(currentTemperature), ignoreCase = true) ||
+                it.temperature.equals(getClothingRecommendation(adjustedTemperature), ignoreCase = true) ||
                         it.temperature.equals(notSpecificTemperature, ignoreCase = true)
             }
 
@@ -325,6 +385,18 @@ class DressingCalendarFragment : Fragment(){
             )
 
             dailyOutfitViewModel.insert(dailyOutfit)
+        }
+    }
+
+    fun getSeason(calendar: Calendar): String {
+        val month = calendar.get(Calendar.MONTH)
+
+        return when (month) {
+            Calendar.DECEMBER, Calendar.JANUARY, Calendar.FEBRUARY -> "Winter"
+            Calendar.MARCH, Calendar.APRIL, Calendar.MAY -> "Spring"
+            Calendar.JUNE, Calendar.JULY, Calendar.AUGUST -> "Summer"
+            Calendar.SEPTEMBER, Calendar.OCTOBER, Calendar.NOVEMBER -> "Autumn"
+            else -> "Unknown"
         }
     }
 

@@ -8,9 +8,12 @@ plugins {
 buildscript {
     repositories {
         google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
+
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22")
 
         val nav_version = "2.9.0"
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
