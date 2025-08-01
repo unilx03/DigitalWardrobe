@@ -6,6 +6,10 @@ import androidx.room.Delete
 import androidx.room.Query
 
 class OutfitWearableRepository(app: Application, private val dao: OutfitWearableDao) {
+    suspend fun getAllOutfitWearables() : List<OutfitWearable> {
+        return dao.getAllOutfitWearables()
+    }
+
     suspend fun insert(outfitWearable: OutfitWearable) : Long {
         return dao.insert(outfitWearable)
     }

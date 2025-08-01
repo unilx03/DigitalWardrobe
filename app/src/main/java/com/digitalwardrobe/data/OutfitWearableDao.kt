@@ -10,6 +10,9 @@ import androidx.room.Update
 
 @Dao
 interface OutfitWearableDao {
+    @Query("SELECT * FROM outfit_wearable_table")
+    suspend fun getAllOutfitWearables(): List<OutfitWearable>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(outfitWearable: OutfitWearable) : Long
 

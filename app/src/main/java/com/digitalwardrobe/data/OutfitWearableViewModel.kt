@@ -18,6 +18,10 @@ class OutfitWearableViewModel(application: Application) : ViewModel() {
         repository = OutfitWearableRepository(application, dao)
     }
 
+    suspend fun getAllOutfitWearables() : List<OutfitWearable> {
+        return repository.getAllOutfitWearables()
+    }
+
     suspend fun insert(outfitWearable: OutfitWearable) : Long {
         return repository.insert(outfitWearable)
     }
