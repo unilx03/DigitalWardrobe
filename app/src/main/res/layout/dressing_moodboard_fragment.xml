@@ -68,13 +68,13 @@
             android:id="@+id/btnAddImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"/>
+            android:text="@string/canvasAdd"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save"
+            android:text="@string/canvasSave"
             android:layout_marginStart="10dp"/>
 
     </LinearLayout>

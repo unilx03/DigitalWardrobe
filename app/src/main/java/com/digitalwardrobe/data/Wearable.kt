@@ -6,6 +6,7 @@ import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 import java.util.Date
@@ -40,6 +41,12 @@ data class Wearable(
 
     @ColumnInfo(name = "wearable_temperature")
     val temperature: String,
+
+    @ColumnInfo(name = "wearable_location_lat")
+    val locationLat: Double?,
+
+    @ColumnInfo(name = "wearable_location_lng")
+    val locationLng: Double?,
 
     @ColumnInfo(name = "wearable_notes")
     val notes: String?

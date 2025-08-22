@@ -37,7 +37,6 @@ class WardrobeItemsFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.wardrobe_items_fragment, container, false)
     }
 
@@ -110,7 +109,9 @@ class WardrobeItemsFragment : Fragment(){
             brand = "",
             price = 0.0,
             temperature = "",
-            notes = ""
+            notes = "",
+            locationLat = null,
+            locationLng = null,
         )
 
         viewLifecycleOwner.lifecycleScope.launch {

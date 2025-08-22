@@ -31,4 +31,18 @@
             app:argType="long" />
     </fragment>
 
+    <action
+        android:id="@+id/actionDetailsToMap"
+        app:destination="@id/nav_wearable_map" />
+
+    <fragment
+        android:id="@+id/nav_wearable_map"
+        android:name="com.digitalwardrobe.ui.wardrobe.WearableMapMarkerFragment"
+        android:label="Set Location Marker"
+        tools:layout="@layout/wearable_map_marker">
+        <argument
+            android:name="wearableId"
+            app:argType="long" />
+    </fragment>
+
 </navigation>

@@ -40,7 +40,6 @@ class OutfitStatsFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.outfit_stats_fragment, container, false)
     }
 
@@ -84,31 +83,23 @@ class OutfitStatsFragment : Fragment(){
 
         lifecycleScope.launch {
             val allDailyOutfits = dailyOutfitViewModel.getAllDailyOutfits()
-
-            // Map for holding month index (0–11) -> count
-            val outfitsPerMonth = IntArray(12) { 0 }  // Initialize with 0 for Jan–Dec
+            val outfitsPerMonth = IntArray(12) { 0 }
 
             for (outfit in allDailyOutfits) {
-                try {
-                    val itemDate = dateFormat.parse(outfit.date) ?: continue
-                    calendar.time = itemDate
-                    val year = calendar.get(Calendar.YEAR)
-                    val month = calendar.get(Calendar.MONTH) // 0 = Jan, 11 = Dec
+                val itemDate = dateFormat.parse(outfit.date) ?: continue
+                calendar.time = itemDate
+                val year = calendar.get(Calendar.YEAR)
+                val month = calendar.get(Calendar.MONTH)
 
-                    if (year == Calendar.getInstance().get(Calendar.YEAR)) {
-                        outfitsPerMonth[month]++
-                    }
-                } catch (_: Exception) {
-                    // Ignore invalid dates
+                if (year == Calendar.getInstance().get(Calendar.YEAR)) {
+                    outfitsPerMonth[month]++
                 }
             }
 
-            // Convert to chart entries: Entry(x = monthIndex, y = count)
             val entries = outfitsPerMonth.mapIndexed { index, count ->
                 Entry(index.toFloat(), count.toFloat())
             }
 
-            // Create dataset and apply styling
             val dataSet = LineDataSet(entries, "Daily outfits set per Month").apply {
                 color = Color.BLUE
                 valueTextColor = Color.BLACK
@@ -117,7 +108,6 @@ class OutfitStatsFragment : Fragment(){
                 setCircleColor(Color.BLUE)
             }
 
-            // Load into chart
             lineChart?.data = LineData(dataSet)
             lineChart?.invalidate()
         }

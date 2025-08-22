@@ -1,13 +1,8 @@
 package com.digitalwardrobe.data
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.*
-import kotlinx.coroutines.launch
 
 class OutfitWearableViewModel(application: Application) : ViewModel() {
 

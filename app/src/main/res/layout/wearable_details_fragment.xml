@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Enter category"
+            android:hint="@string/detailsCategory"
             app:startIconDrawable="@drawable/apparel_24px">
 
             <AutoCompleteTextView
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="Enter color"
+                android:hint="@string/detailsColor"
                 app:startIconDrawable="@drawable/palette_24px">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -67,7 +67,7 @@
                 android:id="@+id/addColorButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add"
+                android:text="@string/canvasAdd"
                 android:layout_marginStart="10dp"/>
         </LinearLayout>
 
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:hint="Enter tag"
+                android:hint="@string/detailsTag"
                 app:startIconDrawable="@drawable/label_24px">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -105,7 +105,7 @@
                 android:id="@+id/addTagButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add"
+                android:text="@string/canvasAdd"
                 android:layout_marginStart="10dp"/>
         </LinearLayout>
 
@@ -120,7 +120,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Enter brand"
+            android:hint="@string/detailsBrand"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:startIconDrawable="@drawable/shoppingmode_24px">
 
@@ -135,7 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Enter price"
+            android:hint="@string/detailsPrice"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:startIconDrawable="@drawable/shopping_cart_24px">
 
@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Select temperature"
+            android:hint="@string/detailsTemperature"
             app:startIconDrawable="@drawable/device_thermostat_24px">
 
             <AutoCompleteTextView
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
-            android:hint="Enter notes"
+            android:hint="@string/detailsNotes"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -180,6 +180,14 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/detailsLocation"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -188,13 +196,13 @@
                 android:id="@+id/saveButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save Changes"/>
+                android:text="@string/detailsSave"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete Item"
+                android:text="@string/detailsDelete"
                 android:layout_marginStart="10dp"/>
 
         </LinearLayout>

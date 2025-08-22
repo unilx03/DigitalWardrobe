@@ -38,7 +38,6 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-//needed to keep track of last position that is not saved on db
 class OutfitCanvasViewModel : ViewModel() {
     val savedWearableStates = MutableLiveData<List<Bundle>>()
 }
@@ -61,7 +60,6 @@ class OutfitPlannerFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.outfit_planner, container, false)
     }
 
@@ -89,7 +87,6 @@ class OutfitPlannerFragment : Fragment(){
         lifecycleScope.launch {
             val savedStates = canvasViewModel.savedWearableStates.value?.associateBy { it.getLong("wearableId") } ?: emptyMap()
 
-            // Fetch all outfit wearables for the given outfitId
             val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
 
             outfitWearables.forEach { ow ->
@@ -98,7 +95,6 @@ class OutfitPlannerFragment : Fragment(){
                     if (wearable != null && wearable.image.isNotBlank()) {
                         val uri = Uri.parse(wearable.image)
 
-                        // If a saved state exists, use its values
                         val savedState = savedStates[ow.wearableId]
                         val x = savedState?.getFloat("x") ?: ow.wearableX
                         val y = savedState?.getFloat("y") ?: ow.wearableY
@@ -139,7 +135,6 @@ class OutfitPlannerFragment : Fragment(){
                             )
                             wearableMap[newWearableImageView] = newOutfitWearable
 
-                            // Save to DB or ViewModel here
                             outfitWearableViewModel.insert(newOutfitWearable)
                         }
                     }
@@ -225,11 +220,11 @@ class OutfitPlannerFragment : Fragment(){
             }
             scaleX = scale
             scaleY = scale
-            tag = uri.toString()  // used for saving
+            tag = uri.toString()
         }
 
         imageView.setOnTouchListener(DragResizeTouchListener {
-            selectImage(imageView) // This acts as the click
+            selectImage(imageView)
         })
 
         canvas.addView(imageView, zIndex)
@@ -238,27 +233,21 @@ class OutfitPlannerFragment : Fragment(){
     }
 
     private fun selectImage(imageView: ImageView) {
-        // Clear previous selection
         selectedWearableImage?.background = null
 
-        // Update selected
         selectedWearableImage = imageView
         imageView.setBackgroundResource(R.drawable.image_selected_border) // Add drawable
 
-        // Enable buttons
         view?.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)?.isEnabled = true
         view?.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)?.isEnabled = true
         view?.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)?.isEnabled = true
     }
 
     private fun deselectImage() {
-        // Clear previous selection
         selectedWearableImage?.background = null
 
-        // Update selected
         selectedWearableImage = null
 
-        // Enable buttons
         view?.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)?.isEnabled = false
         view?.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)?.isEnabled = false
         view?.findViewById<FloatingActionButton>(R.id.btnDeleteWearable)?.isEnabled = false
@@ -273,25 +262,21 @@ class OutfitPlannerFragment : Fragment(){
                 val updated = wearableMap[view]!!.copy(
                     wearableX = view.x,
                     wearableY = view.y,
-                    wearableScale = view.scaleX, // assume uniform scale
+                    wearableScale = view.scaleX,
                     wearableZIndex = i
                 )
 
-                wearableMap[view] = updated // update map
+                wearableMap[view] = updated
                 lifecycleScope.launch {
                     outfitWearableViewModel.update(updated)
                 }
             }
         }
 
-        // Capture screenshot
         val bitmap = captureCollageScreenshot(canvas)
-
-        // Save it
         val previewUri = saveBitmapToInternalStorage(requireContext(), bitmap, "outfit_preview_${args.outfit.id}")
 
         viewLifecycleOwner.lifecycleScope.launch {
-            // Update outfit with preview image path
             val updatedOutfit = currentOutfit.copy(
                 preview = previewUri.toString()
             )

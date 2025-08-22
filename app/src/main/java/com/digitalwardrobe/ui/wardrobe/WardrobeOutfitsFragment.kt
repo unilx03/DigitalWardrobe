@@ -1,14 +1,10 @@
 package com.digitalwardrobe.ui.wardrobe
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -37,7 +33,6 @@ class WardrobeOutfitsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.wardrobe_outfits_fragment, container, false)
     }
 
@@ -66,7 +61,7 @@ class WardrobeOutfitsFragment : Fragment() {
                 val file = File(context.filesDir, "outfit_preview_${outfit.id}.png")
 
                 if (file.exists()) {
-                    validOutfits.add(outfit) // Keep only outfits with real preview image
+                    validOutfits.add(outfit)
                 } else {
                     lifecycleScope.launch {
                         outfitViewModel.delete(outfit)
@@ -88,7 +83,6 @@ class WardrobeOutfitsFragment : Fragment() {
     }
 
     private fun addOutfit() {
-        // Add a new wearable on launch
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val todayDate = dateFormat.format(Date())
 

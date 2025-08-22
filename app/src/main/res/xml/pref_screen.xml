@@ -2,7 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <SwitchPreferenceCompat
-        app:key="hide"
-        app:title="Hide done"
+        app:key="dailyOutfitNotification"
+        app:title="Daily Outfit Notification"
+        app:defaultValue="true"
+        />
+
+    <MultiSelectListPreference
+        android:defaultValue="@array/weekDays"
+        android:entries="@array/weekDays"
+        android:entryValues="@array/weekDays"
+        android:key="dailyActiveDays"
+        android:title="Daily Notification Active days" />
+
+    <SwitchPreferenceCompat
+        app:key="weatherNotification"
+        app:title="Weather Alert Notification"
+        app:defaultValue="true"
         />
 </PreferenceScreen>

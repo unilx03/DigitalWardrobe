@@ -4,20 +4,20 @@
         android:id="@+id/nav_dressing_graph"
         android:enabled="true"
         android:icon="@drawable/checkroom_24px"
-        android:title="@string/menu_dressing" />
+        android:title="@string/menuDressing" />
     <item
         android:id="@+id/nav_wardrobe_graph"
         android:enabled="true"
         android:icon="@drawable/dresser_24px"
-        android:title="@string/menu_wardrobe" />
+        android:title="@string/menuWardrobe" />
     <item
         android:id="@+id/nav_stats_graph"
         android:enabled="true"
         android:icon="@drawable/bar_chart_24px"
-        android:title="@string/menu_stats" />
+        android:title="@string/menuStats" />
     <item
         android:id="@+id/nav_map_graph"
         android:enabled="true"
         android:icon="@drawable/map_search_24px"
-        android:title="@string/menu_map" />
+        android:title="@string/menuMap" />
 </menu>

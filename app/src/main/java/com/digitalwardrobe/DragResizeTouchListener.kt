@@ -14,7 +14,6 @@ class DragResizeTouchListener(
     private var mode = NONE
     private var dX = 0f
     private var dY = 0f
-    private val clickThreshold = 10f
     private var initialDistance = 0f
     private var initialScale = 1f
 

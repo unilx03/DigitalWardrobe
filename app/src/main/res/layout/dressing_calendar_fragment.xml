@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="New" />
+                android:text="@string/calendarNew" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSetRandomOutfit"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="5dp"
-                android:text="Random" />
+                android:text="@string/calendarRandom" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSelectOutfit"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="5dp"
-                android:text="Select" />
+                android:text="@string/calendarAdd" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRemoveOutfit"

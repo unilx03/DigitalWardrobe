@@ -2,6 +2,7 @@ package com.digitalwardrobe.data
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import com.google.android.gms.maps.model.LatLng
 
 class WearableRepository(app: Application, private val dao: WearableDao) {
     suspend fun getAllWearables() : List<Wearable> {
@@ -22,5 +23,9 @@ class WearableRepository(app: Application, private val dao: WearableDao) {
 
     suspend fun getWearableById(id: Long): Wearable? {
         return dao.getWearableById(id)
+    }
+
+    suspend fun getAllWearablesWithLocations(): List<Wearable> {
+        return dao.getAllWearablesWithLocations()
     }
 }

@@ -18,7 +18,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Wearables: "
+                android:text="@string/wearableStatsTotal"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -31,23 +31,71 @@
 
         </LinearLayout>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/wearableCategoryChart"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/wearablesYearChart"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsCategory"
+                android:textAppearance="?attr/textAppearanceBody1" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/sumPricesYearChart"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/wearableCategoryChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsYear"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/wearablesYearChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsBudget"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/sumPricesYearChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp" />
+
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,7 +108,7 @@
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Most used Wearables"
+                    android:text="@string/wearableStatsTop"
                     android:textAppearance="?attr/textAppearanceBody1" />
 
                 <LinearLayout
@@ -91,7 +139,7 @@
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Least used Wearables"
+                    android:text="@string/wearableStatsLeast"
                     android:textAppearance="?attr/textAppearanceBody1" />
 
                 <LinearLayout
@@ -111,23 +159,71 @@
 
             </LinearLayout>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/topColorsChart"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/topTagsChart"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsColor"
+                android:textAppearance="?attr/textAppearanceBody1" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/topBrandChart"
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:id="@+id/topColorsChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsTag"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:id="@+id/topTagsChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wearableStatsBrand"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
+                android:id="@+id/topBrandChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

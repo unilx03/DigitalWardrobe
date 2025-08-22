@@ -24,12 +24,8 @@ import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 
 class WearableDetailsFragment : Fragment() {
@@ -44,7 +40,6 @@ class WearableDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.wearable_details_fragment, container, false)
     }
 
@@ -57,7 +52,6 @@ class WearableDetailsFragment : Fragment() {
             WearableViewModelFactory(requireActivity().application)
         )[WearableViewModel::class.java]
 
-        //set color add chip group
         val colorInput = view.findViewById<EditText>(R.id.colorInput)
         val addColorButton = view.findViewById<Button>(R.id.addColorButton)
         val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
@@ -79,10 +73,6 @@ class WearableDetailsFragment : Fragment() {
             }
         }
 
-        //val colorsString = selectedColors.joinToString(",")
-        //val colorsList = colorsString.split(",")
-
-        //set tag add chip group
         val tagInput = view.findViewById<EditText>(R.id.tagInput)
         val addTagButton = view.findViewById<Button>(R.id.addTagButton)
         val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
@@ -104,19 +94,20 @@ class WearableDetailsFragment : Fragment() {
             }
         }
 
-        //set categories droplist options
         var items = resources.getStringArray(R.array.wearableCategories)
         var adapter = ArrayAdapter(requireContext(), R.layout.droplist_item, items)
         val categoriesDropDown: AutoCompleteTextView =
             view.findViewById(R.id.wearableCategory)
         categoriesDropDown.setAdapter(adapter)
 
-        //set seasons droplist options
         items = resources.getStringArray(R.array.wearableTemperatures)
         adapter = ArrayAdapter(requireContext(), R.layout.droplist_item, items)
         val temperaturesDropDown: AutoCompleteTextView =
             view.findViewById(R.id.wearableTemperature)
         temperaturesDropDown.setAdapter(adapter)
+
+        val addLocationButton = view.findViewById<Button>(R.id.addLocationButton)
+        addLocationButton.setOnClickListener{ addLocation() }
 
         val saveButton = view.findViewById<Button>(R.id.saveButton)
         saveButton.setOnClickListener{ updateWearable() }
@@ -127,7 +118,7 @@ class WearableDetailsFragment : Fragment() {
             builder.also {
                 it
                     .setMessage("Are you sure you want to delete?")
-                    .setCancelable(false) //cancealable through back?
+                    .setCancelable(false)
                     .setPositiveButton("Yes", { dialog, id -> deleteWearable() })
                     .setNegativeButton("No", { dialog,id -> dialog.cancel() })
             }
@@ -139,7 +130,6 @@ class WearableDetailsFragment : Fragment() {
             val wearable = viewModel.getWearableById(wearableId)
 
             if (wearable != null) {
-                // Load image
                 val bitmap = BitmapFactory.decodeStream(
                     context?.contentResolver?.openInputStream(wearable.image.toUri())
                 )
@@ -156,7 +146,6 @@ class WearableDetailsFragment : Fragment() {
                     .setText(wearable.temperature, false)
                 view.findViewById<TextInputEditText>(R.id.wearableNotes).setText(wearable.notes)
 
-                // Populate color chips
                 val colorChipGroup = view.findViewById<ChipGroup>(R.id.colorChipGroup)
                 selectedColors.clear()
                 colorChipGroup.removeAllViews()
@@ -175,7 +164,6 @@ class WearableDetailsFragment : Fragment() {
                     }
                 }
 
-                // Populate tag chips
                 val tagChipGroup = view.findViewById<ChipGroup>(R.id.tagChipGroup)
                 selectedTags.clear()
                 tagChipGroup.removeAllViews()
@@ -194,10 +182,14 @@ class WearableDetailsFragment : Fragment() {
                     }
                 }
 
-                // Store current wearable for update
                 currentWearable = wearable
             }
         }
+    }
+
+    fun addLocation() {
+        val action = WearableDetailsFragmentDirections.actionDetailsToMap(wearableId = currentWearable.id)
+        findNavController().navigate(action)
     }
 
     fun updateWearable() {

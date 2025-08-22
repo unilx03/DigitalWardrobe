@@ -19,7 +19,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Outfits: "
+                android:text="@string/outfitStatsTotal"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -43,7 +43,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total days with set outfits: "
+                android:text="@string/outfitStatsTotalDays"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -56,11 +56,27 @@
 
         </LinearLayout>
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/outfitsYearChart"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_margin="16dp" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp"
+            android:gravity="center" >
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/outfitStatsYear"
+                android:textAppearance="?attr/textAppearanceBody1" />
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/outfitsYearChart"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_margin="16dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -73,7 +89,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Most set Outfits"
+                android:text="@string/outfitStatsTop"
                 android:textAppearance="?attr/textAppearanceBody1" />
 
             <LinearLayout

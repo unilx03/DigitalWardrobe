@@ -2,11 +2,7 @@ package com.digitalwardrobe.ui.dressing
 
 import com.digitalwardrobe.DragResizeTouchListener
 import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -18,34 +14,24 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.digitalwardrobe.R
 import com.digitalwardrobe.data.MoodboardItem
 import com.digitalwardrobe.data.MoodboardItemViewModel
 import com.digitalwardrobe.data.MoodboardItemViewModelFactory
-import com.digitalwardrobe.data.OutfitViewModel
-import com.digitalwardrobe.data.OutfitViewModelFactory
-import com.digitalwardrobe.data.OutfitWearable
-import com.digitalwardrobe.ui.wardrobe.OutfitCanvasViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
-import java.io.File
-import java.io.FileOutputStream
 
 interface SaveableFragment {
     fun saveState()
 }
 
-//needed to keep track of last position that is not saved on db
 class MoodboardItemCanvasViewModel : ViewModel() {
     val savedMoodboardItemStates = MutableLiveData<List<Bundle>>()
 }
@@ -63,7 +49,6 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.dressing_moodboard_fragment, container, false)
     }
 
@@ -85,7 +70,6 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
             items.forEach { item ->
                 val uri = Uri.parse(item.image)
 
-                // If a saved state exists, use its values
                 val savedState = savedStates[item.id]
                 Log.d("SaveState", "Item ${savedState?.getLong("id")} at x=${savedState?.getFloat("x")}, y=${savedState?.getFloat("y")}")
 
@@ -107,7 +91,6 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
         var resultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == Activity.RESULT_OK) {
-                    // There are no request codes
                     val data: Intent? = result.data
                     val uri = data?.data
 
@@ -129,7 +112,6 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
                         itemMap[imageView] = newMoodboardIem
 
                         lifecycleScope.launch {
-                            // Save to DB or ViewModel here
                             viewModel.insert(newMoodboardIem)
                         }
                     }
@@ -223,27 +205,19 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
     }
 
     private fun selectImage(imageView: ImageView) {
-        // Clear previous selection
         selectedItemImage?.background = null
-
-        // Update selected
         selectedItemImage = imageView
         imageView.setBackgroundResource(R.drawable.image_selected_border) // Add drawable
 
-        // Enable buttons
         view?.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)?.isEnabled = true
         view?.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)?.isEnabled = true
         view?.findViewById<FloatingActionButton>(R.id.btnDeleteItem)?.isEnabled = true
     }
 
     private fun deselectImage() {
-        // Clear previous selection
         selectedItemImage?.background = null
-
-        // Update selected
         selectedItemImage = null
 
-        // Enable buttons
         view?.findViewById<FloatingActionButton>(R.id.btnMoveUpLayer)?.isEnabled = false
         view?.findViewById<FloatingActionButton>(R.id.btnMoveDownLayer)?.isEnabled = false
         view?.findViewById<FloatingActionButton>(R.id.btnDeleteItem)?.isEnabled = false
@@ -258,7 +232,7 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
                 val updated = itemMap[view]!!.copy(
                     itemX = view.x,
                     itemY = view.y,
-                    itemScale = view.scaleX, // assume uniform scale
+                    itemScale = view.scaleX,
                     itemZIndex = i
                 )
 

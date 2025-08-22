@@ -23,7 +23,6 @@ class DressingMain : Fragment() {
 
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Set initial fragment only if savedInstanceState is null (first load)
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_container, DressingCalendarFragment())

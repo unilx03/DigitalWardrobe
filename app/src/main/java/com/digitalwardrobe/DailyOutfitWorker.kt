@@ -11,7 +11,13 @@ import androidx.work.WorkerParameters
 import com.digitalwardrobe.MainActivity
 import android.Manifest
 import android.content.pm.PackageManager
+import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
+import com.digitalwardrobe.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DailyNotificationWorker(
     private val context: Context,
@@ -25,6 +31,15 @@ class DailyNotificationWorker(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // Permission not granted; skip sending the notification
+            return Result.success()
+        }
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val selectedDays = prefs.getStringSet("dailyActiveDays", emptySet()) ?: emptySet()
+
+        val today = SimpleDateFormat("EEEE", Locale.getDefault()).format(Date())
+        if (!selectedDays.contains(today)) {
+            //today not selected in preferences
             return Result.success()
         }
 
@@ -42,7 +57,7 @@ class DailyNotificationWorker(
 
         // Build notification with pending intent
         val notification = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Add your outfit")
             .setContentText("Don't forget to add your outfit for today!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)

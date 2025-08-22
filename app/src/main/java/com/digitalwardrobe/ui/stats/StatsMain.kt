@@ -5,9 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import com.digitalwardrobe.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -26,7 +23,6 @@ class StatsMain : Fragment() {
 
         val bottomNav = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
 
-        // Set initial fragment only if savedInstanceState is null (first load)
         if (savedInstanceState == null) {
             childFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_container, WearableStatsFragment())

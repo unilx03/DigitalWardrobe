@@ -21,12 +21,18 @@ import com.digitalwardrobe.data.OutfitWearableViewModelFactory
 import com.digitalwardrobe.data.WearableAdapter
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -125,7 +131,7 @@ class WearableStatsFragment : Fragment(){
     }
 
     fun wearablesCategoryGraph(){
-        val lineChart = view?.findViewById<LineChart>(R.id.wearableCategoryChart)
+        val barChart = view?.findViewById<BarChart>(R.id.wearableCategoryChart)
 
         lifecycleScope.launch {
             val allWearables = wearableViewModel.getAllWearables()
@@ -136,20 +142,16 @@ class WearableStatsFragment : Fragment(){
                 .toList()
 
             val entries = categoryCounts.mapIndexed { index, (_, count) ->
-                Entry(index.toFloat(), count.toFloat())
+                BarEntry(index.toFloat(), count.toFloat())
             }
 
-            val dataSet = LineDataSet(entries, "Wearables per Category").apply {
-                color = Color.parseColor("#388E3C") // Green
+            val dataSet = BarDataSet(entries, "Wearables per Category").apply {
+                setColors(ColorTemplate.MATERIAL_COLORS.toList())
                 valueTextColor = Color.BLACK
-                valueTextSize = 12f
-                lineWidth = 2f
-                circleRadius = 4f
-                setCircleColor(Color.parseColor("#388E3C"))
             }
 
-            lineChart?.apply {
-                data = LineData(dataSet)
+            barChart?.apply {
+                data = BarData(dataSet)
                 xAxis.valueFormatter = IndexAxisValueFormatter(categoryCounts.map { it.first })
                 xAxis.granularity = 1f
                 xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -165,6 +167,7 @@ class WearableStatsFragment : Fragment(){
                 animateX(800)
                 invalidate()
             }
+            barChart?.setExtraOffsets(0f, 0f, 0f, 40f)
         }
     }
 
@@ -202,11 +205,11 @@ class WearableStatsFragment : Fragment(){
             }
 
             val dataSet = LineDataSet(entries, "Budget spent per month").apply {
-                color = Color.BLUE
+                color = Color.RED
                 valueTextColor = Color.BLACK
                 lineWidth = 2f
                 circleRadius = 4f
-                setCircleColor(Color.BLUE)
+                setCircleColor(Color.RED)
             }
 
             // Load into chart
@@ -265,9 +268,9 @@ class WearableStatsFragment : Fragment(){
     }
 
     fun mostUsedWearableAttributesGraph(n: Int = 8){
-        val colorsChart = view?.findViewById<LineChart>(R.id.topColorsChart) ?: return
-        val tagsChart = view?.findViewById<LineChart>(R.id.topTagsChart) ?: return
-        val brandsChart = view?.findViewById<LineChart>(R.id.topBrandChart) ?: return
+        val colorsChart = view?.findViewById<HorizontalBarChart>(R.id.topColorsChart) ?: return
+        val tagsChart = view?.findViewById<HorizontalBarChart>(R.id.topTagsChart) ?: return
+        val brandsChart = view?.findViewById<HorizontalBarChart>(R.id.topBrandChart) ?: return
 
         lifecycleScope.launch {
             val allWearables = wearableViewModel.getAllWearables()
@@ -289,24 +292,22 @@ class WearableStatsFragment : Fragment(){
                 .take(n)
 
             val colorEntries = topColors.mapIndexed { index, entry ->
-                Entry(index.toFloat(), entry.value.toFloat())
+                BarEntry(index.toFloat(), entry.value.toFloat())
             }
 
-            val colorDataSet = LineDataSet(colorEntries, "Top $n Colors").apply {
-                color = Color.MAGENTA
+            val colorDataSet = BarDataSet(colorEntries, "Top $n Colors").apply {
+                setColors(ColorTemplate.MATERIAL_COLORS.toList())
                 valueTextColor = Color.BLACK
-                lineWidth = 2f
-                circleRadius = 5f
-                setCircleColor(Color.MAGENTA)
             }
 
-            colorsChart.data = LineData(colorDataSet)
+            colorsChart.data = BarData(colorDataSet)
             colorsChart.xAxis.apply {
                 valueFormatter = IndexAxisValueFormatter(topColors.map { it.key })
                 granularity = 1f
                 labelRotationAngle = 45f
                 position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
             }
+            colorsChart.setExtraOffsets(20f, 0f, 0f, 0f)
             colorsChart.invalidate()
 
             // TAGS
@@ -326,24 +327,22 @@ class WearableStatsFragment : Fragment(){
                 .take(n)
 
             val tagEntries = topTags.mapIndexed { index, entry ->
-                Entry(index.toFloat(), entry.value.toFloat())
+                BarEntry(index.toFloat(), entry.value.toFloat())
             }
 
-            val tagDataSet = LineDataSet(tagEntries, "Top $n Tags").apply {
-                color = Color.BLUE
+            val tagDataSet = BarDataSet(tagEntries, "Top $n Tags").apply {
+                setColors(ColorTemplate.MATERIAL_COLORS.toList())
                 valueTextColor = Color.BLACK
-                lineWidth = 2f
-                circleRadius = 5f
-                setCircleColor(Color.BLUE)
             }
 
-            tagsChart.data = LineData(tagDataSet)
+            tagsChart.data = BarData(tagDataSet)
             tagsChart.xAxis.apply {
                 valueFormatter = IndexAxisValueFormatter(topTags.map { it.key })
                 granularity = 1f
                 labelRotationAngle = 45f
                 position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
             }
+            tagsChart.setExtraOffsets(20f, 0f, 0f, 0f)
             tagsChart.invalidate()
 
             // BRANDS
@@ -351,30 +350,22 @@ class WearableStatsFragment : Fragment(){
                 .filter { !it.brand.isNullOrBlank() }
                 .groupingBy { it.brand.trim().lowercase() }
                 .eachCount()
-
-            val topBrands = brandFrequencyMap.entries
-                .sortedByDescending { it.value }
-                .take(n)
-
+            val topBrands = brandFrequencyMap.entries.sortedByDescending { it.value }.take(n)
             val brandEntries = topBrands.mapIndexed { index, entry ->
-                Entry(index.toFloat(), entry.value.toFloat())
+                BarEntry(index.toFloat(), entry.value.toFloat())
             }
-
-            val brandDataSet = LineDataSet(brandEntries, "Top $n Brands").apply {
-                color = Color.GREEN
+            val brandDataSet = BarDataSet(brandEntries, "Top $n Brands").apply {
+                setColors(ColorTemplate.VORDIPLOM_COLORS.toList())
                 valueTextColor = Color.BLACK
-                lineWidth = 2f
-                circleRadius = 5f
-                setCircleColor(Color.GREEN)
             }
-
-            brandsChart.data = LineData(brandDataSet)
+            brandsChart.data = BarData(brandDataSet)
             brandsChart.xAxis.apply {
                 valueFormatter = IndexAxisValueFormatter(topBrands.map { it.key })
                 granularity = 1f
-                labelRotationAngle = 45f
-                position = com.github.mikephil.charting.components.XAxis.XAxisPosition.BOTTOM
+                position = XAxis.XAxisPosition.BOTTOM
+                labelRotationAngle = -45f
             }
+            brandsChart.setExtraOffsets(20f, 0f, 0f, 0f)
             brandsChart.invalidate()
         }
     }

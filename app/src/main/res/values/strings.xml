@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Digital Wardrobe</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -7,11 +6,48 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_dressing">Dressing</string>
-    <string name="menu_wardrobe">Wardrobe</string>
-    <string name="menu_stats">Stats</string>
-    <string name="menu_map">Map</string>
+    <string name="menuDressing">Dressing</string>
+    <string name="menuWardrobe">Wardrobe</string>
+    <string name="menuStats">Stats</string>
+    <string name="menuMap">Map</string>
+
     <string name="wearable_notSpecific">Not specific</string>
+
+    <string name="calendarNew">New</string>
+    <string name="calendarRandom">Random</string>
+    <string name="calendarAdd">Select</string>
+
+    <string name="detailsCategory">Select Category</string>
+    <string name="detailsColor">Enter Color</string>
+    <string name="detailsTag">Enter Tag</string>
+    <string name="detailsBrand">Enter Brand</string>
+    <string name="detailsPrice">Enter Price</string>
+    <string name="detailsTemperature">Select Temperature</string>
+    <string name="detailsNotes">Enter Notes</string>
+    <string name="detailsLocation">Add location</string>
+    <string name="detailsSave">Save changes</string>
+    <string name="detailsDelete">Delete item</string>
+
+    <string name="canvasAdd">Add</string>
+    <string name="canvasSave">Save</string>
+    <string name="canvasDelete">Delete</string>
+
+    <string name="wearableStatsTotal">Total Wearables: </string>
+    <string name="wearableStatsCategory">Wearables by category</string>
+    <string name="wearableStatsYear">Wearables added this year</string>
+    <string name="wearableStatsBudget">Budget spent this year</string>
+    <string name="wearableStatsTop">Most used Wearables</string>
+    <string name="wearableStatsLeast">Least used Wearables</string>
+    <string name="wearableStatsColor">Top Colors</string>
+    <string name="wearableStatsTag">Top Tags</string>
+    <string name="wearableStatsBrand">Top Brands</string>
+
+    <string name="outfitStatsTotal">Total Outfits: </string>
+    <string name="outfitStatsTotalDays">Total days with set outfits: </string>
+    <string name="outfitStatsYear">Daily outfits set this year</string>
+    <string name="outfitStatsTop">Most set Outfits</string>
+
+    <string name="markerWearable">Marker Wearable</string>
 
     <string name="back"><![CDATA[<-]]></string>
     <string name="forward"><![CDATA[->]]></string>
@@ -29,11 +65,22 @@
         <item> Swimwear </item>
         <item> Full body </item>
     </string-array>
+
     <string-array name="wearableTemperatures">
         <item>Cold/Winter (Below 5°C)</item>
         <item>Cool/Autumn (5°C to 15°C)</item>
         <item>Mild/Spring (15°C to 25°C)</item>
         <item>Hot/Summer (Above 25°C)</item>
         <item>Not specific</item>
+    </string-array>
+
+    <string-array name="weekDays">
+        <item> Monday </item>
+        <item> Tuesday </item>
+        <item> Wednesday </item>
+        <item> Thursday </item>
+        <item> Friday </item>
+        <item> Saturday </item>
+        <item> Sunday </item>
     </string-array>
 </resources>

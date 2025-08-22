@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import android.Manifest
+import android.content.Context
 import android.net.Uri
 import android.widget.Button
 import androidx.fragment.app.viewModels
@@ -202,7 +203,13 @@ class DressingCalendarFragment : Fragment(){
                 val response = RetrofitClient.weatherService.getCurrentWeatherByCoords(lat, lon, apiKey)
                 currentTemperature = response.main.temp
 
-                //Log.v("Weather","Temp: $temp°C\nWear: $clothes")
+                // Save it for comparison later
+                val prefs = requireContext().getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putFloat("last_known_temp", currentTemperature.toFloat())
+                    .putString("last_known_condition", response.weather.firstOrNull()?.main ?: "")
+                    .apply()
+
             } catch (e: Exception) {
                 Log.v("Weather","Error: ${e.message}")
             }

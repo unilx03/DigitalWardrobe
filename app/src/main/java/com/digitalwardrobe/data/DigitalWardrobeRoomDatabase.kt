@@ -15,6 +15,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         OutfitWearable::class,
         MoodboardItem::class,
         DailyOutfit::class,
+        GeofenceVisit::class
     ],
     exportSchema = false
 )
@@ -26,6 +27,7 @@ abstract class DigitalWardrobeRoomDatabase : RoomDatabase() {
     abstract fun outfitWearableDao(): OutfitWearableDao
     abstract fun moodboardItemDao(): MoodboardItemDao
     abstract fun dailyOutfitDao(): DailyOutfitDao
+    abstract fun geofenceVisitDao(): GeofenceVisitDao
 
     companion object {
 

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.*
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.launch
 
 class WearableViewModel(application: Application) : ViewModel() {
@@ -36,6 +37,10 @@ class WearableViewModel(application: Application) : ViewModel() {
 
     suspend fun getWearableById(id: Long): Wearable? {
         return repository.getWearableById(id)
+    }
+
+    suspend fun getAllWearablesWithLocations(): List<Wearable> {
+        return repository.getAllWearablesWithLocations()
     }
 }
 
