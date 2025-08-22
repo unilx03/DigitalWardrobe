@@ -21,7 +21,6 @@
             android:id="@+id/descriptionText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Manage Daily Outfit"
             android:textAppearance="?attr/textAppearanceBody1"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"

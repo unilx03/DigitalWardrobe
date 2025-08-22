@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.preference.PreferenceManager
 import com.digitalwardrobe.data.DigitalWardrobeRoomDatabase
 import com.digitalwardrobe.data.GeofenceVisit
 import com.digitalwardrobe.data.GeofenceVisitRepository
@@ -19,6 +20,10 @@ import kotlinx.coroutines.launch
 
 class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        val geofenceEnabled = prefs.getBoolean("geofencingNotification", false)
+        val visitLimit = prefs.getInt("geofencingFrequency", 5)
+
         GeofencingEvent.fromIntent(intent)?.let { event ->
             if (event.hasError()) {
                 Log.e("Geofence", "Error: ${event.errorCode}")
@@ -31,8 +36,9 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
                 if (event.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
                     Log.i("Geofence", "Entered geofence")
-                    // Run DB logic in background
                     CoroutineScope(Dispatchers.IO).launch {
+                        if (!geofenceEnabled) return@launch
+
                         val repo = GeofenceVisitRepository(
                             DigitalWardrobeRoomDatabase.getDatabase(context).geofenceVisitDao()
                         )
@@ -49,7 +55,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                         val visitCount = repo.countVisitsSince(requestId, oneMonthAgo)
                         Log.d("Geofence", "Visit count in last month: $visitCount")
 
-                        if (visitCount > 5) {
+                        if (visitCount > visitLimit) {
                             sendNotification(
                                 context,
                                 "You’ve visited this location $visitCount times in the last month!"
@@ -65,23 +71,23 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     }
 
     private fun sendNotification(context: Context, message: String) {
-        val channelId = "geofence_channel"
+        val channelId = "Geofence Channel"
 
         // Create notification channel for Android O+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Geofence Alerts",
+                "Geofence Frequency Alert",
                 NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Notifications when entering geofenced areas"
+                description = "Notification when entering geofenced areas often"
             }
             val manager = context.getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(channel)
         }
 
         val notificationBuilder = NotificationCompat.Builder(context, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) // Replace with your icon
+            .setSmallIcon(R.drawable.location_on_24px)
             .setContentTitle("Nearby Purchase Location")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

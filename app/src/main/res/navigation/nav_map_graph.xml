@@ -8,6 +8,6 @@
     <fragment
         android:id="@+id/nav_map"
         android:name="com.digitalwardrobe.MapFragment"
-        android:label="@string/menu_map"
+        android:label="@string/menuMap"
         tools:layout="@layout/map_fragment" />
 </navigation>

@@ -1,9 +1,6 @@
 package com.digitalwardrobe.data
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.room.Delete
-import androidx.room.Query
 
 class OutfitWearableRepository(app: Application, private val dao: OutfitWearableDao) {
     suspend fun getAllOutfitWearables() : List<OutfitWearable> {

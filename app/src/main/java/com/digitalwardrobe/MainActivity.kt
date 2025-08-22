@@ -12,6 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(){
@@ -40,6 +41,18 @@ class MainActivity : AppCompatActivity(){
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+
+        if (!prefs.contains("dailyOutfitNotification")) {
+            prefs.edit().putBoolean("dailyOutfitNotification", false).apply()
+        }
+        if (!prefs.contains("weatherNotification")) {
+            prefs.edit().putBoolean("weatherNotification", false).apply()
+        }
+        if (!prefs.contains("geofencingNotification")) {
+            prefs.edit().putBoolean("geofencingNotification", false).apply()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_wardrobe"
         android:name="com.digitalwardrobe.ui.wardrobe.WardrobeMain"
-        android:label="@string/menu_wardrobe"
+        android:label="@string/menuWardrobe"
         tools:layout="@layout/wardrobe_main" />
 
     <fragment

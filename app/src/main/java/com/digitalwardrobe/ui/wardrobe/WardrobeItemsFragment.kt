@@ -114,7 +114,7 @@ class WardrobeItemsFragment : Fragment(){
             locationLng = null,
         )
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             wearableViewModel.insert(newWearable)
         }
     }

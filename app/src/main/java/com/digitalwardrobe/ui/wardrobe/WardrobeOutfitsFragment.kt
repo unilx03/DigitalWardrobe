@@ -17,6 +17,8 @@ import com.digitalwardrobe.data.Outfit
 import com.digitalwardrobe.data.OutfitAdapter
 import com.digitalwardrobe.data.OutfitViewModel
 import com.digitalwardrobe.data.OutfitViewModelFactory
+import com.digitalwardrobe.data.OutfitWearableViewModel
+import com.digitalwardrobe.data.OutfitWearableViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import java.io.File
@@ -26,6 +28,7 @@ import java.util.Locale
 
 class WardrobeOutfitsFragment : Fragment() {
     private lateinit var outfitViewModel: OutfitViewModel
+    private lateinit var outfitWearableViewModel: OutfitWearableViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var outfitAdapter: OutfitAdapter
 
@@ -50,6 +53,11 @@ class WardrobeOutfitsFragment : Fragment() {
             OutfitViewModelFactory(requireActivity().application)
         )[OutfitViewModel::class.java]
 
+        outfitWearableViewModel = ViewModelProvider(
+            requireActivity(),
+            OutfitWearableViewModelFactory(requireActivity().application)
+        )[OutfitWearableViewModel::class.java]
+
         viewLifecycleOwner.lifecycleScope.launch observe@{
             val outfits = outfitViewModel.getAllOutfits()
             Log.v("LABEL", "Items received: ${outfits.size}")
@@ -63,8 +71,9 @@ class WardrobeOutfitsFragment : Fragment() {
                 if (file.exists()) {
                     validOutfits.add(outfit)
                 } else {
+                    //delete invalid outfits with related outfitwearables
                     lifecycleScope.launch {
-                        outfitViewModel.delete(outfit)
+                        deleteOutfit(outfit.id)
                     }
                 }
             }
@@ -91,11 +100,27 @@ class WardrobeOutfitsFragment : Fragment() {
             addDate = todayDate,
         )
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             val outfitId = outfitViewModel.insert(newOutfit)
             val fullOutfit = newOutfit.copy(id = outfitId)
             val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(fullOutfit)
             findNavController().navigate(action)
+        }
+    }
+
+    fun deleteOutfit(outfitId : Long) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(outfitId)
+            outfitWearables.forEach { ow ->
+                if (ow != null)
+                    outfitWearableViewModel.delete(ow)
+            }
+
+            val outfit = outfitViewModel.getOutfitById(outfitId)
+
+            if (outfit != null) {
+                outfitViewModel.delete(outfit)
+            }
         }
     }
 }

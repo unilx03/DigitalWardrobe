@@ -117,7 +117,7 @@ class WearableDetailsFragment : Fragment() {
             val builder = AlertDialog.Builder(context)
             builder.also {
                 it
-                    .setMessage("Are you sure you want to delete?")
+                    .setMessage("Delete Wearable?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", { dialog, id -> deleteWearable() })
                     .setNegativeButton("No", { dialog,id -> dialog.cancel() })

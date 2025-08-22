@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -20,6 +23,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.digitalwardrobe.DragResizeTouchListener
@@ -86,7 +90,6 @@ class OutfitPlannerFragment : Fragment(){
 
         lifecycleScope.launch {
             val savedStates = canvasViewModel.savedWearableStates.value?.associateBy { it.getLong("wearableId") } ?: emptyMap()
-
             val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
 
             outfitWearables.forEach { ow ->
@@ -117,13 +120,17 @@ class OutfitPlannerFragment : Fragment(){
         savedStateHandle?.getLiveData<String>("wearableId")?.observe(viewLifecycleOwner) { wearableId ->
             if (wearableId != null) {
                 lifecycleScope.launch {
-                    val outfitWearable = outfitWearableViewModel.getWearableForOutfit(args.outfit.id, wearableId.toLong())
+                    val outfitWearable = outfitWearableViewModel.getWearableForOutfit(
+                        args.outfit.id,
+                        wearableId.toLong()
+                    )
                     if (outfitWearable == null) {
                         val wearable = wearableViewModel.getWearableById(wearableId.toLong())
 
                         if (wearable != null) {
                             val uri = Uri.parse(wearable.image)
-                            val newWearableImageView = addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
+                            val newWearableImageView =
+                                addImageToCanvas(uri, 0f, 0f, 1f, canvas.childCount)
 
                             val newOutfitWearable = OutfitWearable(
                                 outfitId = args.outfit.id,
@@ -137,9 +144,12 @@ class OutfitPlannerFragment : Fragment(){
 
                             outfitWearableViewModel.insert(newOutfitWearable)
                         }
-                    }
-                    else {
-                        Toast.makeText(requireContext(), "Wearable already added", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Wearable already added",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -161,8 +171,8 @@ class OutfitPlannerFragment : Fragment(){
             val builder = AlertDialog.Builder(context)
             builder.also {
                 it
-                    .setMessage("Are you sure you want to delete?")
-                    .setCancelable(false) //cancealable through back?
+                    .setMessage("Delete Outfit?")
+                    .setCancelable(false)
                     .setPositiveButton("Yes", { dialog, id -> deleteOutfit() })
                     .setNegativeButton("No", { dialog,id -> dialog.cancel() })
             }
@@ -302,10 +312,10 @@ class OutfitPlannerFragment : Fragment(){
     }
 
     fun deleteOutfit() {
-        val outfitId = args.outfit.id
+        val outfitId = currentOutfit.id
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(args.outfit.id)
+            val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(outfitId)
             outfitWearables.forEach { ow ->
                 if (ow != null)
                     outfitWearableViewModel.delete(ow)
@@ -313,8 +323,9 @@ class OutfitPlannerFragment : Fragment(){
 
             val outfit = outfitViewModel.getOutfitById(outfitId)
 
-            if (outfit != null)
+            if (outfit != null) {
                 outfitViewModel.delete(outfit)
+            }
 
             findNavController().popBackStack()
         }

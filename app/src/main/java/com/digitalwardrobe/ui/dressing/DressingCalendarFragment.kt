@@ -10,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CalendarView
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,13 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import android.Manifest
 import android.content.Context
-import android.net.Uri
-import android.widget.Button
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.navigation.fragment.navArgs
-import androidx.room.ColumnInfo
 import com.digitalwardrobe.R
 import com.digitalwardrobe.data.DailyOutfit
 import com.digitalwardrobe.data.DailyOutfitViewModel
@@ -55,11 +50,11 @@ import java.util.Date
 import java.util.Locale
 
 class DressingCalendarViewModel : ViewModel() {
-    val lastSavedDate = MutableLiveData<Bundle>()
+    val lastSavedDate = MutableLiveData<String>()
 }
 
 class DressingCalendarFragment : Fragment(){
-    private val calendarViewModel: DressingCalendarViewModel by viewModels()
+    private val calendarViewModel: DressingCalendarViewModel by activityViewModels()
 
     private lateinit var calendarView : CalendarView
     private lateinit var dailyOutfitViewModel : DailyOutfitViewModel
@@ -71,12 +66,12 @@ class DressingCalendarFragment : Fragment(){
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var currentTemperature : Double = 0.0
+    private var currentDate : String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.dressing_calendar_fragment, container, false)
     }
 
@@ -123,7 +118,8 @@ class DressingCalendarFragment : Fragment(){
         outfitImageView = view.findViewById(R.id.outfitImage)
 
         calendarView = view.findViewById(R.id.calendarView)
-        calendarViewModel.lastSavedDate.value?.getString("lastSavedDate")?.let { saved ->
+        calendarViewModel.lastSavedDate.value?.let { saved ->
+            currentDate = saved
             val savedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(saved)
             savedDate?.let {
                 calendarView.setDate(it.time, false, true)
@@ -136,7 +132,7 @@ class DressingCalendarFragment : Fragment(){
                 )
             }
         } ?: run {
-            // No saved date, so default to today
+            //no saved date, default to today
             calendarView.post {
                 val millis = calendarView.date
                 val calendar = Calendar.getInstance().apply {
@@ -152,17 +148,6 @@ class DressingCalendarFragment : Fragment(){
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             onDateSelected(year, month, dayOfMonth)
-
-            // Save selected date to ViewModel as a string
-            val selectedDate = Calendar.getInstance().apply {
-                set(year, month, dayOfMonth)
-            }.time
-
-            val dateString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedDate)
-            calendarViewModel.lastSavedDate.value = Bundle().apply {
-                putString("lastSavedDate", dateString)
-            }
-            Log.v("savedDate", dateString)
         }
 
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
@@ -203,7 +188,6 @@ class DressingCalendarFragment : Fragment(){
                 val response = RetrofitClient.weatherService.getCurrentWeatherByCoords(lat, lon, apiKey)
                 currentTemperature = response.main.temp
 
-                // Save it for comparison later
                 val prefs = requireContext().getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)
                 prefs.edit()
                     .putFloat("last_known_temp", currentTemperature.toFloat())
@@ -218,16 +202,18 @@ class DressingCalendarFragment : Fragment(){
 
     private fun onDateSelected(year: Int, month: Int, day: Int) {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val selectedDate = dateFormat.format(Calendar.getInstance().apply {
-            set(year, month, day)  // Set the date selected
-        }.time)
+        currentDate = dateFormat.format(Calendar.getInstance().apply { set(year, month, day) }.time)
+
+        calendarViewModel.lastSavedDate.value = currentDate
+
+        view?.findViewById<MaterialTextView>(R.id.descriptionText)?.text = currentDate + " Daily Outfit";
 
         //set outfit in the imageview for the date
         lifecycleScope.launch {
-            val dateOutfit = dailyOutfitViewModel.getDailyOutfitByDate(selectedDate)
+            val dateOutfit = dailyOutfitViewModel.getDailyOutfitByDate(currentDate)
 
             if (dateOutfit == null) {
-                Log.d("Calendar", "No daily outfit for $selectedDate")
+                Log.d("Calendar", "No daily outfit for $currentDate")
                 outfitImageView.setImageResource(R.drawable.ic_launcher_foreground)
                 outfitNotPresentVisual()
                 outfitImageView.setOnClickListener(null)
@@ -239,12 +225,11 @@ class DressingCalendarFragment : Fragment(){
                 val file = File(context?.filesDir, "outfit_preview_${outfit.id}.png")
 
                 if (file.exists()) {
-                    // Load bitmap from file directly
                     val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                     outfitImageView.setImageBitmap(bitmap)
                     outfitPresentVisual()
                 } else {
-                    outfitImageView.setImageResource(R.drawable.ic_launcher_foreground) // fallback if file missing
+                    outfitImageView.setImageResource(R.drawable.ic_launcher_foreground)
                     outfitNotPresentVisual()
                 }
 
@@ -273,19 +258,16 @@ class DressingCalendarFragment : Fragment(){
     }
 
     private fun addNewOutfit() {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val todayDate = dateFormat.format(Date())
+        Log.v("new date", currentDate)
 
         val newOutfit = Outfit(
             preview = null.toString(),
-            addDate = todayDate,
+            addDate = currentDate,
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
             val outfitId = outfitViewModel.insert(newOutfit)
             val fullOutfit = newOutfit.copy(id = outfitId)
-
-            addDailyOutfit(outfitId)
 
             val action = WardrobeOutfitsFragmentDirections.actionWardrobeToOutfit(fullOutfit)
             findNavController().navigate(action)
@@ -310,16 +292,12 @@ class DressingCalendarFragment : Fragment(){
             val allWearables = wearableViewModel.getAllWearables()
             val notSpecificTemperature = getString(R.string.wearable_notSpecific)
 
-            // Get today's season
             val todaySeason = getSeason(Calendar.getInstance())
-
-            // Get selected date's season
-            val selectedSeason = getSeason(calendarDate)
+            val selectedSeason = getSeason(calendarDate) //selected day season
 
             val adjustedTemperature = if (todaySeason.equals(selectedSeason, ignoreCase = true)) {
                 currentTemperature
             } else {
-                // You can define a season-to-temperature map here
                 val seasonalTemperatureMap = mapOf(
                     "Winter" to 0.0,
                     "Spring" to 15.0,
@@ -335,25 +313,23 @@ class DressingCalendarFragment : Fragment(){
             }
 
             val wearablesByCategory = wearablesBasedOnTemperature
-                .filter { it.category != null }
                 .groupBy { it.category }
 
             val selectedWearables = mutableListOf<Wearable>()
 
-            // Pick 1 from each category
+            //one for each category
             for ((_, categoryGroup) in wearablesByCategory) {
                 categoryGroup.randomOrNull()?.let { selectedWearables.add(it) }
                 if (selectedWearables.size >= 4) break
             }
 
-            // Fill up to 4 with temperature-based wearables
+            //fill based on temperature if available, otherwise random
             if (selectedWearables.size < 4) {
                 val alreadySelectedIds = selectedWearables.map { it.id }.toSet()
                 val remainingWearables = wearablesBasedOnTemperature.filterNot { it.id in alreadySelectedIds }
                 selectedWearables += remainingWearables.shuffled().take(4 - selectedWearables.size)
             }
 
-            // If after this, you still have less than 4, fill from allWearables ignoring temp
             if (selectedWearables.size < 4) {
                 val alreadySelectedIds = selectedWearables.map { it.id }.toSet()
                 val remainingWearables = allWearables.filterNot { it.id in alreadySelectedIds }
@@ -366,7 +342,7 @@ class DressingCalendarFragment : Fragment(){
                     wearableId = wearable.id,
                     wearableX = 0.0f,
                     wearableY = 0.0f,
-                    wearableScale = 1.0f,
+                    wearableScale = 0.25f,
                     wearableZIndex = index
                 )
 
@@ -382,16 +358,16 @@ class DressingCalendarFragment : Fragment(){
     }
 
     private fun addDailyOutfit(outfitId : Long) {
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val todayDate = dateFormat.format(Date())
+        val selectedDate = calendarViewModel.lastSavedDate.value
+        if (selectedDate != null) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                val dailyOutfit = DailyOutfit(
+                    outfitId = outfitId,
+                    date = selectedDate,
+                )
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            val dailyOutfit = DailyOutfit(
-                outfitId = outfitId,
-                date = todayDate,
-            )
-
-            dailyOutfitViewModel.insert(dailyOutfit)
+                dailyOutfitViewModel.insert(dailyOutfit)
+            }
         }
     }
 
@@ -410,7 +386,7 @@ class DressingCalendarFragment : Fragment(){
     fun getClothingRecommendation(temp: Double): String {
         val temperatures = resources.getStringArray(R.array.wearableTemperatures)
         return when {
-            temp < 5 -> temperatures[0]  // e.g. "Below 5°C - Cold: Heavy coat, gloves, boots"
+            temp < 5 -> temperatures[0]
             temp in 5.0..15.0 -> temperatures[1]
             temp in 15.0..25.0 -> temperatures[2]
             else -> temperatures[3]

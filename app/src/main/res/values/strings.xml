@@ -6,6 +6,8 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="app_name">Digital Wardrobe</string>
+
     <string name="menuDressing">Dressing</string>
     <string name="menuWardrobe">Wardrobe</string>
     <string name="menuStats">Stats</string>

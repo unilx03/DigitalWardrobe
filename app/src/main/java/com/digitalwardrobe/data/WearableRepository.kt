@@ -1,8 +1,6 @@
 package com.digitalwardrobe.data
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import com.google.android.gms.maps.model.LatLng
 
 class WearableRepository(app: Application, private val dao: WearableDao) {
     suspend fun getAllWearables() : List<Wearable> {

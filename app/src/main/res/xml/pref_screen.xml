@@ -19,4 +19,21 @@
         app:title="Weather Alert Notification"
         app:defaultValue="true"
         />
+
+    <SwitchPreferenceCompat
+        app:key="geofencingNotification"
+        app:title="Geofencing frequency Notification"
+        app:defaultValue="true"
+        />
+
+    <EditTextPreference
+        android:defaultValue="5"
+        android:key="geofencingFrequency"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Frequency for Geofence Notification"
+        android:inputType="numberDecimal"
+        android:digits="0123456789"
+        />
+
 </PreferenceScreen>

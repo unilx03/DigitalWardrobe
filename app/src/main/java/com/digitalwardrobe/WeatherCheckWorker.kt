@@ -52,8 +52,11 @@ class WeatherCheckWorker(
                 )
 
                 val notificationText = buildString {
-                    if (tempChanged) append("Temp changed: $lastKnownTemp°C → $newTemp°C. ")
-                    if (conditionChanged) append("Condition changed: $lastKnownCondition → $newCondition.")
+                    if (tempChanged)
+                        append("Temp changed: $lastKnownTemp°C → $newTemp°C. ")
+
+                    if (conditionChanged)
+                        append("Condition changed: $lastKnownCondition → $newCondition.")
                 }
 
                 val notification = NotificationCompat.Builder(context, channelId)
@@ -88,8 +91,8 @@ class WeatherCheckWorker(
 
     private fun createNotificationChannel(channelId: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Outfit Reminder"
-            val descriptionText = "Daily reminder to add your outfit"
+            val name = "Weather Check"
+            val descriptionText = "Notification for sudden weather change"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText

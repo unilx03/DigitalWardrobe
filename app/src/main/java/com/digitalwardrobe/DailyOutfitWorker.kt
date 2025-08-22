@@ -58,7 +58,7 @@ class DailyNotificationWorker(
         // Build notification with pending intent
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Add your outfit")
+            .setContentTitle("Add your daily outfit")
             .setContentText("Don't forget to add your outfit for today!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
@@ -72,8 +72,8 @@ class DailyNotificationWorker(
 
     private fun createNotificationChannel(channelId: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Outfit Reminder"
-            val descriptionText = "Daily reminder to add your outfit"
+            val name = "Daily Outfit Reminder"
+            val descriptionText = "Notification for daily outfit"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText

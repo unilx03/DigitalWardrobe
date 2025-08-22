@@ -9,6 +9,7 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.work.*
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
@@ -32,35 +33,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
-        val prefs = preferenceManager.sharedPreferences
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
-        // Check user preference and schedule or cancel accordingly on first load
-        val isEnabled = prefs?.getBoolean("showDailyNotifications", true)
-        if (isEnabled == true) {
-            context?.let { scheduleDailyNotification(it) }
+        // Schedule/cancel workers based on current preferences
+        val dailyEnabled = prefs.getBoolean("dailyOutfitNotification", false)
+        if (dailyEnabled) {
+            scheduleDailyNotification(requireContext())
         } else {
-            context?.let { WorkManager.getInstance(it).cancelUniqueWork("daily_outfit_notification") }
+            WorkManager.getInstance(requireContext()).cancelUniqueWork("daily_outfit_notification")
         }
 
-        // Listen for changes in notification preference
-        prefs?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == "dailyOutfitNotification") {
-                val enabled = sharedPreferences.getBoolean(key, true)
-                if (enabled) {
-                    context?.let { scheduleDailyNotification(it) }
-                } else {
-                    context?.let { WorkManager.getInstance(it).cancelUniqueWork("daily_outfit_notification") }
+        val weatherEnabled = prefs.getBoolean("weatherNotification", false)
+        if (weatherEnabled) {
+            weatherCheckNotification(requireContext())
+        } else {
+            WorkManager.getInstance(requireContext()).cancelUniqueWork("weather_check_notification")
+        }
+
+        // Listen for future changes
+        prefs.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
+            when (key) {
+                "dailyOutfitNotification" -> {
+                    val enabled = sharedPreferences.getBoolean(key, false)
+                    if (enabled)
+                        scheduleDailyNotification(requireContext())
+                    else
+                        WorkManager.getInstance(requireContext()).cancelUniqueWork("daily_outfit_notification")
                 }
-            }
-        }
-
-        prefs?.registerOnSharedPreferenceChangeListener { sharedPreferences, key ->
-            if (key == "weatherNotification") {
-                val enabled = sharedPreferences.getBoolean(key, true)
-                if (enabled) {
-                    context?.let { weatherCheckNotification(it) }
-                } else {
-                    context?.let { WorkManager.getInstance(it).cancelUniqueWork("weather_check_notification") }
+                "weatherNotification" -> {
+                    val enabled = sharedPreferences.getBoolean(key, false)
+                    if (enabled)
+                        weatherCheckNotification(requireContext())
+                    else
+                        WorkManager.getInstance(requireContext()).cancelUniqueWork("weather_check_notification")
                 }
             }
         }
