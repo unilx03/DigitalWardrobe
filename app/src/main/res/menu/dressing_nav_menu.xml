@@ -3,9 +3,9 @@
     <item
         android:id="@+id/dressing_calendar"
         android:icon="@drawable/calendar_month_24px"
-        android:title="Calendar" />
+        android:title="@string/menuCalendar" />
     <item
         android:id="@+id/dressing_moodboard"
         android:icon="@drawable/hallway_24px"
-        android:title="Moodboard" />
+        android:title="@string/menuMoodboard" />
 </menu>

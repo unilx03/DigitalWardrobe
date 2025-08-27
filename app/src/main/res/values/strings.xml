@@ -13,6 +13,11 @@
     <string name="menuStats">Stats</string>
     <string name="menuMap">Map</string>
 
+    <string name="menuWearables">Wearables</string>
+    <string name="menuOutfits">Outfits</string>
+    <string name="menuCalendar">Calendar</string>
+    <string name="menuMoodboard">Moodboard</string>
+
     <string name="wearable_notSpecific">Not specific</string>
 
     <string name="calendarNew">New</string>
@@ -50,6 +55,7 @@
     <string name="outfitStatsTop">Most set Outfits</string>
 
     <string name="markerWearable">Marker Wearable</string>
+    <string name="markerVisits">Visits last month:</string>
 
     <string name="back"><![CDATA[<-]]></string>
     <string name="forward"><![CDATA[->]]></string>

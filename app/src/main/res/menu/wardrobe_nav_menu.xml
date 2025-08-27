@@ -3,9 +3,9 @@
     <item
         android:id="@+id/wardrobe_wearables"
         android:icon="@drawable/apparel_24px"
-        android:title="Wearables" />
+        android:title="@string/menuWearables" />
     <item
         android:id="@+id/wardrobe_outfits"
         android:icon="@drawable/styler_24px"
-        android:title="Outfits" />
+        android:title="@string/menuOutfits" />
 </menu>

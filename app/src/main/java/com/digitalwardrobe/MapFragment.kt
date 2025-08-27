@@ -18,6 +18,9 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.digitalwardrobe.data.DigitalWardrobeRoomDatabase
+import com.digitalwardrobe.data.GeofenceVisit
+import com.digitalwardrobe.data.GeofenceVisitRepository
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableViewModel
 import com.digitalwardrobe.data.WearableViewModelFactory
@@ -33,6 +36,9 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -106,13 +112,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         map.setOnMarkerClickListener { marker ->
             val wearable = marker.tag as? Wearable
             wearable?.let {
-                showWearableImage(it)
+                showWearableCard(it)
             }
             true
         }
     }
 
-    private fun showWearableImage(wearable: Wearable) {
+    private fun showWearableCard(wearable: Wearable) {
         val dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.map_show_wearable, null)
 
@@ -121,6 +127,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             context?.contentResolver?.openInputStream(wearable.image.toUri())
         )
         imageView.setImageBitmap(bitmap)
+
+        //show number of visits in last month from geofencevisit
+        val repo = context?.let { DigitalWardrobeRoomDatabase.getDatabase(it).geofenceVisitDao() }?.let {
+            GeofenceVisitRepository(
+                it
+            )
+        }
+
+        val oneMonthAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000) // 30 days in ms
+
+        CoroutineScope(Dispatchers.IO).launch {
+            // Count visits in last month
+            val visitCount = repo?.countVisitsSince(wearable.id.toString(), oneMonthAgo)
+            dialogView.findViewById<MaterialTextView>(R.id.markerVisitCount).text = visitCount.toString()
+        }
 
         AlertDialog.Builder(requireContext())
             .setView(dialogView)

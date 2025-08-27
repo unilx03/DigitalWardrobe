@@ -1,4 +1,5 @@
-package com.digitalwardrobe.ui.dressing
+package com.digitalwardrobe
+
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

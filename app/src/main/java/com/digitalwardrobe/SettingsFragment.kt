@@ -67,6 +67,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     else
                         WorkManager.getInstance(requireContext()).cancelUniqueWork("weather_check_notification")
                 }
+                //disabling geofencing blocks sendNotification in GeofenceBroadcastReceiver
             }
         }
     }

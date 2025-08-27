@@ -1,13 +1,11 @@
 package com.digitalwardrobe.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.google.android.gms.maps.model.LatLng
 
 data class LocationEntity(
     val wearable_location_lat: Double?,

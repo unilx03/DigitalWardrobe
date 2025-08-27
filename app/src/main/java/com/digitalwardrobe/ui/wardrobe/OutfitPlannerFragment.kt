@@ -237,7 +237,7 @@ class OutfitPlannerFragment : Fragment(){
             selectImage(imageView)
         })
 
-        canvas.addView(imageView, zIndex)
+        canvas.addView(imageView, zIndex.coerceIn(0, canvas.childCount))
 
         return imageView;
     }
@@ -314,7 +314,7 @@ class OutfitPlannerFragment : Fragment(){
     fun deleteOutfit() {
         val outfitId = currentOutfit.id
 
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(outfitId)
             outfitWearables.forEach { ow ->
                 if (ow != null)
@@ -336,7 +336,7 @@ class OutfitPlannerFragment : Fragment(){
         wearableMap.remove(selectedWearableImage)
 
         if (selectedOutfitWearable != null) {
-            viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
                 outfitWearableViewModel.delete(selectedOutfitWearable)
             }
 

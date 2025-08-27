@@ -58,7 +58,7 @@ class WardrobeOutfitsFragment : Fragment() {
             OutfitWearableViewModelFactory(requireActivity().application)
         )[OutfitWearableViewModel::class.java]
 
-        viewLifecycleOwner.lifecycleScope.launch observe@{
+        lifecycleScope.launch observe@{
             val outfits = outfitViewModel.getAllOutfits()
             Log.v("LABEL", "Items received: ${outfits.size}")
 
@@ -72,9 +72,7 @@ class WardrobeOutfitsFragment : Fragment() {
                     validOutfits.add(outfit)
                 } else {
                     //delete invalid outfits with related outfitwearables
-                    lifecycleScope.launch {
-                        deleteOutfit(outfit.id)
-                    }
+                    deleteOutfit(outfit.id)
                 }
             }
 
@@ -109,7 +107,7 @@ class WardrobeOutfitsFragment : Fragment() {
     }
 
     fun deleteOutfit(outfitId : Long) {
-        viewLifecycleOwner.lifecycleScope.launch {
+        lifecycleScope.launch {
             val outfitWearables = outfitWearableViewModel.getWearablesForOutfit(outfitId)
             outfitWearables.forEach { ow ->
                 if (ow != null)

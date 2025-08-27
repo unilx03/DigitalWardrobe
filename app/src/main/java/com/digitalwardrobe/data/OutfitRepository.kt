@@ -1,7 +1,6 @@
 package com.digitalwardrobe.data
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 
 class OutfitRepository(app: Application, private val dao: OutfitDao) {
     suspend fun getAllOutfits() : List<Outfit> {

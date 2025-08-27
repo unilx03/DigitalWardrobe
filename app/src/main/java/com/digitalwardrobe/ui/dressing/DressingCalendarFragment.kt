@@ -22,6 +22,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.digitalwardrobe.R
+import com.digitalwardrobe.RetrofitClient
 import com.digitalwardrobe.data.DailyOutfit
 import com.digitalwardrobe.data.DailyOutfitViewModel
 import com.digitalwardrobe.data.DailyOutfitViewModelFactory
@@ -205,6 +206,7 @@ class DressingCalendarFragment : Fragment(){
         currentDate = dateFormat.format(Calendar.getInstance().apply { set(year, month, day) }.time)
 
         calendarViewModel.lastSavedDate.value = currentDate
+        Log.v("date", currentDate)
 
         view?.findViewById<MaterialTextView>(R.id.descriptionText)?.text = currentDate + " Daily Outfit";
 
