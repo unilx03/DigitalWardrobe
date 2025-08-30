@@ -11,11 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.digitalwardrobe.data.DailyOutfitViewModel
-import com.digitalwardrobe.data.DailyOutfitViewModelFactory
-import com.digitalwardrobe.data.OutfitAdapter
-import com.digitalwardrobe.data.OutfitViewModel
-import com.digitalwardrobe.data.OutfitViewModelFactory
 import com.digitalwardrobe.data.OutfitWearableViewModel
 import com.digitalwardrobe.data.OutfitWearableViewModelFactory
 import com.digitalwardrobe.data.WearableAdapter
@@ -48,7 +43,6 @@ class WearableStatsFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.wearable_stats_fragment, container, false)
     }
 
@@ -92,8 +86,8 @@ class WearableStatsFragment : Fragment(){
         lifecycleScope.launch {
             val allWearables = wearableViewModel.getAllWearables()
 
-            // Map for holding month index (0–11) -> count
-            val wearablesPerMonth = IntArray(12) { 0 }  // Initialize with 0 for Jan–Dec
+            // Map for holding month index (0–11)
+            val wearablesPerMonth = IntArray(12) { 0 }
 
             for (wearable in allWearables) {
                 try {
@@ -110,12 +104,10 @@ class WearableStatsFragment : Fragment(){
                 }
             }
 
-            // Convert to chart entries: Entry(x = monthIndex, y = count)
             val entries = wearablesPerMonth.mapIndexed { index, count ->
                 Entry(index.toFloat(), count.toFloat())
             }
 
-            // Create dataset and apply styling
             val dataSet = LineDataSet(entries, "Wearables added per Month").apply {
                 color = Color.BLUE
                 valueTextColor = Color.BLACK
@@ -124,7 +116,6 @@ class WearableStatsFragment : Fragment(){
                 setCircleColor(Color.BLUE)
             }
 
-            // Load into chart
             lineChart?.data = LineData(dataSet)
             lineChart?.invalidate()
         }
@@ -199,7 +190,6 @@ class WearableStatsFragment : Fragment(){
                 }
             }
 
-            // Prepare entries for chart
             val entries = sumPricesPerMonth.mapIndexed { index, price ->
                 Entry(index.toFloat(), price.toFloat())
             }
@@ -212,7 +202,6 @@ class WearableStatsFragment : Fragment(){
                 setCircleColor(Color.RED)
             }
 
-            // Load into chart
             lineChart?.data = LineData(dataSet)
             lineChart?.invalidate()
         }

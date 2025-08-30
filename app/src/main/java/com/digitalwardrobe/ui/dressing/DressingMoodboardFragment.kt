@@ -28,15 +28,11 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
-interface SaveableFragment {
-    fun saveState()
-}
-
 class MoodboardItemCanvasViewModel : ViewModel() {
     val savedMoodboardItemStates = MutableLiveData<List<Bundle>>()
 }
 
-class DressingMoodboardFragment : Fragment(), SaveableFragment{
+class DressingMoodboardFragment : Fragment(){
     private val canvasViewModel: MoodboardItemCanvasViewModel by activityViewModels() //moodboard survive in mainactivity, so everywhere
 
     private lateinit var canvas: FrameLayout
@@ -160,17 +156,9 @@ class DressingMoodboardFragment : Fragment(), SaveableFragment{
         deselectImage()
     }
 
-    override fun saveState() {
-        saveMoodboardState()
-    }
-
     override fun onPause() {
         super.onPause()
 
-        saveMoodboardState()
-    }
-
-    fun saveMoodboardState() {
         val itemStates = itemMap.map { (imageView, moodboardItem) ->
             Bundle().apply {
                 putLong("itemId", moodboardItem.id)

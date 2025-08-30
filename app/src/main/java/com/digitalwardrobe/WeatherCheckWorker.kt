@@ -7,22 +7,15 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getString
-import androidx.lifecycle.lifecycleScope
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.digitalwardrobe.RetrofitClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class WeatherCheckWorker(
@@ -32,25 +25,6 @@ class WeatherCheckWorker(
 
     private val fusedLocationClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
-
-    /*private fun getWeatherByLocation(lat: Double, lon: Double) {
-        lifecycleScope.launch {
-            try {
-                val apiKey = getString(context, R.string.weatherAPIKey)
-                val response = RetrofitClient.weatherService.getCurrentWeatherByCoords(lat, lon, apiKey)
-                val currentTemperature = response.main.temp
-
-                val prefs = context.getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)
-                prefs.edit()
-                    .putFloat("last_known_temp", currentTemperature.toFloat())
-                    .putString("last_known_condition", response.weather.firstOrNull()?.main ?: "")
-                    .apply()
-
-            } catch (e: Exception) {
-                Log.v("Weather","Error: ${e.message}")
-            }
-        }
-    }*/
 
     override suspend fun doWork(): Result {
         return try {

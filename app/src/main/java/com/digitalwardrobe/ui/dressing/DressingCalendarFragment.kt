@@ -18,7 +18,6 @@ import androidx.navigation.fragment.findNavController
 import android.Manifest
 import android.content.Context
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.digitalwardrobe.R
@@ -260,8 +259,6 @@ class DressingCalendarFragment : Fragment(){
     }
 
     private fun addNewOutfit() {
-        Log.v("new date", currentDate)
-
         val newOutfit = Outfit(
             preview = null.toString(),
             addDate = currentDate,
@@ -289,7 +286,6 @@ class DressingCalendarFragment : Fragment(){
             )
 
             val generatedOutfitId = outfitViewModel.insert(newOutfit)
-            Log.v("id", generatedOutfitId.toString())
 
             val allWearables = wearableViewModel.getAllWearables()
             val notSpecificTemperature = getString(R.string.wearable_notSpecific)

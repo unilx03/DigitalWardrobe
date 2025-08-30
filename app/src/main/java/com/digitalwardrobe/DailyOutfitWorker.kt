@@ -11,7 +11,6 @@ import androidx.work.WorkerParameters
 import com.digitalwardrobe.MainActivity
 import android.Manifest
 import android.content.pm.PackageManager
-import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import com.digitalwardrobe.R
@@ -27,10 +26,9 @@ class DailyNotificationWorker(
     override fun doWork(): Result {
         val channelId = "DAILY_OUTFIT"
 
-        // Check notification permission on Android 13+
+        // Check notification permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // Permission not granted; skip sending the notification
             return Result.success()
         }
 

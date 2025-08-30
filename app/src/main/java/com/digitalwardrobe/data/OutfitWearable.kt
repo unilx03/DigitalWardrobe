@@ -28,19 +28,15 @@ data class OutfitWearable(
     @ColumnInfo(name = "wearable_id")
     val wearableId: Long,
 
-    @NonNull
     @ColumnInfo(name = "wearable_x")
     var wearableX: Float,
 
-    @NonNull
     @ColumnInfo(name = "wearable_y")
     var wearableY: Float,
 
-    @NonNull
     @ColumnInfo(name = "wearable_scale")
     var wearableScale: Float,
 
-    @NonNull
     @ColumnInfo(name = "wearable_zIndex")
     var wearableZIndex: Int,
 

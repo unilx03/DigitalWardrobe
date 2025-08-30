@@ -7,11 +7,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 
-data class LocationEntity(
-    val wearable_location_lat: Double?,
-    val wearable_location_lng: Double?
-)
-
 @Dao
 interface WearableDao {
 

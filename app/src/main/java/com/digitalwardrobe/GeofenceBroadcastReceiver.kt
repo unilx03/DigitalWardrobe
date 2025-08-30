@@ -73,7 +73,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     private fun sendNotification(context: Context, message: String) {
         val channelId = "Geofence Channel"
 
-        // Create notification channel for Android O+
+        // Create notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,

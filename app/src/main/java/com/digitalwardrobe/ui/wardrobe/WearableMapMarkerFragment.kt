@@ -67,6 +67,7 @@ class WearableMapMarkerFragment : Fragment(), OnMapReadyCallback {
                 val boundsBuilder = LatLngBounds.Builder()
                 var hasValidBounds = false
 
+                // show existing marker
                 if (selectedWearable.locationLat != null && selectedWearable.locationLng != null) {
                     val location = LatLng(selectedWearable.locationLat, selectedWearable.locationLng)
                     googleMap.addMarker(MarkerOptions().position(location))
@@ -75,7 +76,6 @@ class WearableMapMarkerFragment : Fragment(), OnMapReadyCallback {
                     hasValidBounds = true
                 }
                 else {
-                    // Optional: Move camera to current location when map loads
                     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
                     fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                         location?.let {
@@ -92,7 +92,6 @@ class WearableMapMarkerFragment : Fragment(), OnMapReadyCallback {
             }
         }
 
-        // Setup map click listener
         googleMap.setOnMapClickListener { newLatLng ->
             Log.d("Map_Tag", "CLICK")
             Log.v("coordinates", newLatLng.toString())
@@ -100,9 +99,7 @@ class WearableMapMarkerFragment : Fragment(), OnMapReadyCallback {
             googleMap.clear()
             googleMap.addMarker(MarkerOptions().position(newLatLng))
 
-            if (currentWearableId != -1L) {
-                updateCoordinates(currentWearableId, newLatLng.latitude, newLatLng.longitude)
-            }
+            updateCoordinates(currentWearableId, newLatLng.latitude, newLatLng.longitude)
         }
     }
 

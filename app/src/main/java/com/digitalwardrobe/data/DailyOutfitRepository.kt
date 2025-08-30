@@ -19,10 +19,6 @@ class DailyOutfitRepository(app: Application, private val dao: DailyOutfitDao) {
         dao.delete(outfit)
     }
 
-    suspend fun getDailyOutfitById(id: Long): DailyOutfit? {
-        return dao.getDailyOutfitById(id)
-    }
-
     suspend fun getDailyOutfitByDate(date: String): DailyOutfit? {
         return dao.getDailyOutfitByDate(date)
     }

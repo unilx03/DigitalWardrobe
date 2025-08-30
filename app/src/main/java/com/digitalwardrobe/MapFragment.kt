@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.digitalwardrobe.data.DigitalWardrobeRoomDatabase
-import com.digitalwardrobe.data.GeofenceVisit
 import com.digitalwardrobe.data.GeofenceVisitRepository
 import com.digitalwardrobe.data.Wearable
 import com.digitalwardrobe.data.WearableViewModel
@@ -32,7 +30,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
@@ -51,7 +48,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.map_fragment, container, false)
     }
 
@@ -97,8 +93,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             com.google.android.gms.maps.model.CircleOptions()
                                 .center(position)
                                 .radius(geofenceRadiusMeters) // radius in meters, same as geofence radius
-                                .strokeColor(0x550000FF) // semi-transparent blue stroke
-                                .fillColor(0x220000FF) // very transparent blue fill
+                                .strokeColor(0x550000FF)
+                                .fillColor(0x220000FF)
                                 .strokeWidth(2f)
                         )
                     }
@@ -129,11 +125,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         imageView.setImageBitmap(bitmap)
 
         //show number of visits in last month from geofencevisit
-        val repo = context?.let { DigitalWardrobeRoomDatabase.getDatabase(it).geofenceVisitDao() }?.let {
-            GeofenceVisitRepository(
-                it
-            )
-        }
+        val repo = context?.let { DigitalWardrobeRoomDatabase.getDatabase(it).geofenceVisitDao() }?.let { GeofenceVisitRepository(it) }
 
         val oneMonthAgo = System.currentTimeMillis() - (30L * 24 * 60 * 60 * 1000) // 30 days in ms
 

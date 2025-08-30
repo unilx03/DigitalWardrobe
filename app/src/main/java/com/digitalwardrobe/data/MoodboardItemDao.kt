@@ -1,6 +1,5 @@
 package com.digitalwardrobe.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -18,9 +17,6 @@ interface MoodboardItemDao {
 
     @Update
     suspend fun update(moodboardItem: MoodboardItem)
-
-    @Query("SELECT * FROM moodboard_item_table WHERE id = :itemId")
-    suspend fun getMoodboardItemById(itemId: Long): MoodboardItem?
 
     @Delete
     suspend fun delete(moodboardItem: MoodboardItem)

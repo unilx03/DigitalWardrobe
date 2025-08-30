@@ -29,10 +29,6 @@ class DailyOutfitViewModel (application: Application) : ViewModel() {
         repository.delete(outfit)
     }
 
-    suspend fun getDailyOutfitById(id: Long): DailyOutfit? {
-        return repository.getDailyOutfitById(id)
-    }
-
     suspend fun getDailyOutfitByDate(date: String): DailyOutfit? {
         return repository.getDailyOutfitByDate(date)
     }

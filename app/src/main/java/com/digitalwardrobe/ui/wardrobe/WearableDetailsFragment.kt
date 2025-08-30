@@ -135,7 +135,6 @@ class WearableDetailsFragment : Fragment() {
                 )
                 view.findViewById<ImageView>(R.id.wearableImage).setImageBitmap(bitmap)
 
-                // Set basic fields
                 view.findViewById<TextInputEditText>(R.id.wearableBrand).setText(wearable.brand)
                 if (wearable.price != 0.0)
                     view.findViewById<TextInputEditText>(R.id.wearablePrice)

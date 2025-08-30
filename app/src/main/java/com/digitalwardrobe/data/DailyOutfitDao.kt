@@ -1,6 +1,5 @@
 package com.digitalwardrobe.data
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -18,9 +17,6 @@ interface DailyOutfitDao {
 
     @Update
     suspend fun update(dailyOutfit: DailyOutfit)
-
-    @Query("SELECT * FROM daily_outfit_table WHERE id = :dailyOutfitId")
-    suspend fun getDailyOutfitById(dailyOutfitId: Long): DailyOutfit?
 
     @Query("SELECT * FROM daily_outfit_table WHERE daily_outfit_date = :date")
     suspend fun getDailyOutfitByDate(date: String): DailyOutfit?
